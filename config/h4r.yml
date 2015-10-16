@@ -1,0 +1,11 @@
+development:
+  smtp: &SMTP
+    allow_outgoing_emails: false
+    mailgun: &MAILGUN
+      port: 587
+      address: "smtp.mailgun.com"
+      user_name: "postmaster@sandbox4907475c71f140c59e9e171c38e00093.mailgun.org"
+      password: "1d018f2be83dfbd9b9df89d6c603e71d"
+      from: "info@h4r.com" #"abedali@sandbox4907475c71f140c59e9e171c38e00093.mailgun.org"
+      api_key: "key-670fe0e29a970cadf2a5f2c170f23992"
+      domain: "sandbox4907475c71f140c59e9e171c38e00093.mailgun.org"

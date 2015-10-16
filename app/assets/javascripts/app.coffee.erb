@@ -1,0 +1,12 @@
+app.config([ '$routeProvider',
+  ($routeProvider)->
+    $routeProvider
+      .when('/',
+        templateUrl: "<%= asset_path('index.html') %>"
+        controller: 'RecipesController'
+      )
+      .when('/recipes/new',
+        templateUrl: "<%= asset_path('new.html') %>"
+        controller: 'SomeOtherController'
+      )
+])
