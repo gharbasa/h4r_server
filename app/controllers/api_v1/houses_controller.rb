@@ -14,8 +14,9 @@ class ApiV1::HousesController < ApiV1::BaseController
   
   def create
     if(params[:house][:created_by] != current_user.id)
-      puts "Login user is different from created_by user attribute in request payload."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
       return
     end
 
@@ -25,8 +26,9 @@ class ApiV1::HousesController < ApiV1::BaseController
     if @house.save
       render 'show', :status => :created
     else
-      print @house.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @house.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -42,12 +44,14 @@ class ApiV1::HousesController < ApiV1::BaseController
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
-        print @house.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      puts "User is neither admin nor house owner."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -66,12 +70,14 @@ class ApiV1::HousesController < ApiV1::BaseController
         end
         render 'show', :status => :ok
       else
-        print @house.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      puts "User is not admin."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is not admin."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -81,8 +87,9 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.deactivate! 
       render 'destroy', :status => :ok
     else
-      puts "User is neither admin nor house owner."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   

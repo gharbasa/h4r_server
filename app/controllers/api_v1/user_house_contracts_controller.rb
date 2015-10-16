@@ -21,8 +21,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   def create
     if(params[:user_house_contract][:created_by] != current_user.id)
-      puts "Login user is different from created_by user attribute in request payload."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
       return
     end
     @userhouselink = UserHouseLink.find(params[:user_house_contract][:user_house_link_id])

@@ -22,7 +22,7 @@ class ApiV1::UsersessionController < ApiV1::BaseController
       @errMsg = "Inactive user " + @user.email + " is trying to login. Login rejected."
       #print errMsg
       logger.info(@errMsg)
-      render 'errors', :status => :forbidden
+      render 'error', :status => :forbidden
       return
     end
     
@@ -41,8 +41,9 @@ class ApiV1::UsersessionController < ApiV1::BaseController
     if @user_session.save
       render 'show', :status => :created
     else
-      print @user_session.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @user_session.errors.full_messages
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
     end
   end
   

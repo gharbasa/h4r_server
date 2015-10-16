@@ -17,8 +17,9 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
     if @notification_type.save
       render 'show', :status => :created
     else
-      print @notification_type.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification_type.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -34,11 +35,14 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
         flash[:notice] = "Notification type updated!"
         render 'show', :status => :ok
       else
-        print @notification_type.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @notification_type.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Only admin can create notifications."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -48,8 +52,9 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
       @notification_type.deactivate! 
       render 'destroy', :status => :ok
     else
-      print @notification_type.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification_type.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
 end
