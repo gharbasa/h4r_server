@@ -36,8 +36,8 @@ NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDAT
 
 #Time.now.to_s :db
 user = User.create!(login: 'abed', email: 'abedali@engineer.com',  
-  password: "tant-a01",
-  password_confirmation: "tant-a01",
+  password: "general",
+  password_confirmation: "general",
   fname: "Abed", 
   mname: "", 
   lname: "Ali", 
