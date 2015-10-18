@@ -30,6 +30,17 @@ class ApiV1::NotificationsController < ApiV1::BaseController
   end
   
   def create
+    if params[:notification][:created_by].nil?
+       params[:notification][:created_by] = current_user.id
+    end 
+    
+    if(params[:notification][:created_by] != current_user.id)
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
     @notification = Notification.create(params[:notification])
     @notification.created_by = current_user.id 
     if @notification.save

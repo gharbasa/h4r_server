@@ -20,6 +20,11 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:user_house_contract][:created_by].nil?
+       params[:user_house_contract][:created_by] = current_user.id
+    end 
+    
     if(params[:user_house_contract][:created_by] != current_user.id)
       @errMsg = "Login user is different from created_by user attribute in request payload."
       print @errMsg 

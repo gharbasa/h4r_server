@@ -8,6 +8,8 @@ class NotificationType < ActiveRecord::Base
     NEW_USER        = 1
     HOUSE_VERIFIED = 2
     USER_HOUSE_RECORD_UPDATED = 3
+    COMMUNITY_VERIFIED = 4
+    COMMUNITY_UPDATED = 5
   end
   
   include ActiveFlag
@@ -18,6 +20,14 @@ class NotificationType < ActiveRecord::Base
   
   def self.findHouseVerifiedNotification 
     notificationtype = NotificationType.where(ntype: TYPES::HOUSE_VERIFIED, active: ActiveFlag::ACTIVE).take
+  end
+  
+  def self.findCommunityVerifiedNotification 
+    notificationtype = NotificationType.where(ntype: TYPES::COMMUNITY_VERIFIED, active: ActiveFlag::ACTIVE).take
+  end
+  
+  def self.findCommunityUpdatedNotification 
+    notificationtype = NotificationType.where(ntype: TYPES::COMMUNITY_UPDATED, active: ActiveFlag::ACTIVE).take
   end
   
   def self.findUserHouseLinkUpdate 

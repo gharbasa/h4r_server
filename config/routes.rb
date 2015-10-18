@@ -64,6 +64,7 @@ H4R::Application.routes.draw do
       resources :user_house_links, :only => [:index]
       resources :house_pics, :only => [:index]
       resources :user_house_contracts, :only => [:index]
+      
     end
     
     resources :user_house_links, :only => [:index, :show, :create, :update, :destroy] do
@@ -76,6 +77,22 @@ H4R::Application.routes.draw do
     end
     
     resources :house_pics, :only => [:index, :show, :create, :update, :destroy] do
+      #destroy will delete the record, but not mark as inactive. After owner association is deleted
+      #admin can only make someone as house owner.
+    end
+    
+    resources :communities, :only => [:index, :show, :create, :update, :destroy] do
+      collection do
+        #put :reorder
+        get :search
+      end
+      member do
+        put :verified
+      end
+      resources :community_pics, :only => [:index]
+    end
+    
+    resources :community_pics, :only => [:index, :show, :create, :update, :destroy] do
       #destroy will delete the record, but not mark as inactive. After owner association is deleted
       #admin can only make someone as house owner.
     end

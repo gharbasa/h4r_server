@@ -13,6 +13,11 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:house_pic][:created_by].nil?
+       params[:house_pic][:created_by] = current_user.id
+    end 
+    
     if(params[:house_pic][:created_by] != current_user.id)
       @errMsg = "Login user is different from created_by user attribute in request payload."
       print @errMsg 
@@ -48,8 +53,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
 
   def update
     @house_pic = HousePic.find(params[:id])
-    @house = @house_pic.house
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
+    if canUserUpdate? @house_pic # only house owner or admin can upload pics
       @house_pic.updated_by = current_user.id 
       processPicture if !params[:house_pic][:picture].nil?
       
@@ -71,8 +75,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   
   def destroy
     @house_pic = HousePic.find(params[:id])
-    @house = @house_pic.house
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
+    if canUserUpdate? @house_pic # only house owner or admin can upload pics
       if @house_pic.destroy
         render 'destroy', :status => :ok
       else
@@ -85,6 +88,10 @@ class ApiV1::HousePicsController < ApiV1::BaseController
       print @errMsg 
       render 'error', :status => :unprocessable_entity    
     end
+  end
+  
+  def canUserUpdate? house_pic
+    current_user.admin? || current_user.owner?(house_pic.house)
   end
   
   def processPicture

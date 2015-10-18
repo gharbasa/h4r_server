@@ -12,9 +12,11 @@ class ApiV1::UsersController < ApiV1::BaseController
   end
   
   def create
+    params[:user][:created_by] = (current_user == nil)? nil:current_user.id
+
     processAvatar if !params[:user][:avatar].nil?
     @user = User.create(params[:user])
-    @user.created_by = (current_user == nil)? nil:current_user.id
+    
     
     if @user.save
       #if !(current_user || false)

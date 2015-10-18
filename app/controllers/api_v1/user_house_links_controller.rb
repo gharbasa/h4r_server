@@ -15,7 +15,11 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   end
   
   def create
-    if(params[:created_by] != current_user.id)
+    if params[:user_house_link][:created_by].nil?
+       params[:user_house_link][:created_by] = current_user.id
+    end 
+    
+    if(params[:user_house_link][:created_by] != current_user.id)
       @errMsg = "Login user is different from created_by user attribute in request payload."
       print @errMsg 
       render 'error', :status => :unprocessable_entity

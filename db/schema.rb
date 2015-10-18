@@ -79,9 +79,35 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.float      :processing_fee,      :default => 0
     t.boolean    :verified,            :default => false #Verify house address
     t.boolean   :active,          :default => true #House active?
-    
+    t.integer   :community_id    #Can be null
     t.integer   :created_by  #user_id
     t.integer   :updated_by  #user_id
+    t.timestamps
+  end
+  
+  create_table :communities do |t|
+    t.string     :name,                :null => false
+    t.string     :addr1,               :null => false   #street name/colony name
+    t.string     :addr2,               :null => false   #house number
+    t.string     :addr3,               :null => false    #town/city name
+    t.string     :addr4,               :null => false    #state
+    t.integer    :total_pics,          :default => 0
+    t.float      :processing_fee,      :default => 0
+    t.boolean    :verified,            :default => false #Verify house address
+    t.boolean   :active,          :default => true #House active?
+    t.integer   :manager_id   #users table
+    t.integer   :created_by  #user_id
+    t.integer   :updated_by  #user_id
+    t.timestamps
+  end
+  
+  create_table :community_pics do |t|    #
+    t.integer             :community_id,               :null => false
+    t.attachment :picture
+    t.string              :about_pic,               :null => false #About the pic
+    t.boolean             :primary_pic,  :default => false
+    t.integer   :created_by
+    t.integer   :updated_by
     t.timestamps
   end
   

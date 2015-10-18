@@ -34,6 +34,18 @@ NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDAT
   subject: "Change in house record!"
 )
 
+NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_VERIFIED, content: 'Dear %s, \nCommunity has been verified and Thank you for giving us an opportunity to verify the community. We are excited to have you in H4R family. \nRegards H4R Team',  
+  require_retries: false, 
+  active: true,
+  subject: "H4R Verified the community!"
+)
+
+NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_UPDATED, content: 'Dear %s, \nThere is a change in the Community. \nRegards H4R Team',  
+  require_retries: false, 
+  active: true,
+  subject: "Change in community!"
+)
+
 #Time.now.to_s :db
 user = User.create!(login: 'abed', email: 'abedali@engineer.com',  
   password: "general",

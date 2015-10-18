@@ -13,6 +13,11 @@ class ApiV1::HousesController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:house][:created_by].nil?
+       params[:house][:created_by] = current_user.id
+    end 
+    
     if(params[:house][:created_by] != current_user.id)
       @errMsg = "Login user is different from created_by user attribute in request payload."
       print @errMsg 
@@ -62,7 +67,7 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.updated_by = current_user.id
       @house.verified = true
       if @house.save
-        flash[:house] = "House is been successfully verified!"
+        flash[:house] = "House has been successfully verified!"
         @owner = @house.owner
         if !@owner.nil?
           #send email to house owner  
@@ -101,6 +106,7 @@ class ApiV1::HousesController < ApiV1::BaseController
                                           .or(houses[:addr2].matches("%#{params[:address]}%"))
                                           .or(houses[:addr3].matches("%#{params[:address]}%"))
                                           .or(houses[:addr4].matches("%#{params[:address]}%"))
+                                          .or(houses[:name].matches("%#{params[:address]}%"))
                                           )
               else 
                  []
