@@ -48,6 +48,6 @@ module H4R #This is a namespace for routes.rb
     #                     File.basename(i, ".rb")
     #                     puts File.basename(i, ".rb")
     #end
-    config.active_record.observers = :user_observer, :house_observer, :user_house_link_observer
+    config.active_record.observers = :user_observer, :house_observer, :user_house_link_observer, :community_observer
   end
 end

@@ -12,13 +12,25 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:notification_type][:created_by].nil?
+       params[:notification_type][:created_by] = current_user.id
+    end 
+    
+    if(params[:notification_type][:created_by] != current_user.id)
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
     @notification_type = NotificationType.create(params[:notification_type])
-    @notification_type.created_by = current_user.id 
     if @notification_type.save
       render 'show', :status => :created
     else
-      print @notification_type.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification_type.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -34,11 +46,14 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
         flash[:notice] = "Notification type updated!"
         render 'show', :status => :ok
       else
-        print @notification_type.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @notification_type.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Only admin can create notifications."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -48,8 +63,9 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
       @notification_type.deactivate! 
       render 'destroy', :status => :ok
     else
-      print @notification_type.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification_type.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
 end

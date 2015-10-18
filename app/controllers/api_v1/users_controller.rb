@@ -12,9 +12,11 @@ class ApiV1::UsersController < ApiV1::BaseController
   end
   
   def create
+    params[:user][:created_by] = (current_user == nil)? nil:current_user.id
+
     processAvatar if !params[:user][:avatar].nil?
     @user = User.create(params[:user])
-    @user.created_by = (current_user == nil)? nil:current_user.id
+    
     
     if @user.save
       #if !(current_user || false)
@@ -26,8 +28,9 @@ class ApiV1::UsersController < ApiV1::BaseController
       UserMailer.welcome_email(@user).deliver_now #deliver_later
       render 'show', :status => :created
     else
-      print @user.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @user.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -58,10 +61,13 @@ class ApiV1::UsersController < ApiV1::BaseController
         render 'show', :status => :ok
       else
         print @user.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
       end
     else
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Only login user or admin can modify user record."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -75,12 +81,14 @@ class ApiV1::UsersController < ApiV1::BaseController
         flash[:house] = "User is been successfully verified!"
         render 'show', :status => :ok
       else
-        print @user.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @user.errors.full_messages
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
       end
     else
-      puts "User is not admin."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is not admin."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -91,9 +99,10 @@ class ApiV1::UsersController < ApiV1::BaseController
       current_user_session.destroy if current_user_session.user.id == @user.id
       #TODO: Send email to admin that the user is deactivated  
       render 'destroy', :status => :ok
-    else
-      print @user.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+    else      
+      @errMsg = @user.errors.full_messages
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
     end
   end
   

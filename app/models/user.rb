@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :user_house_links
   has_many :houses, through: :user_house_links
   has_many :notifications
+  has_many :communities, class_name: "Community", foreign_key: "manager_id"
   
   #default location of avatars are /Users/abedali/eclipse/workspace1/h4r_backend/public/system/users/avatars/000/000/001  
   has_attached_file :avatar, 
@@ -105,6 +106,16 @@ class User < ActiveRecord::Base
                      user_house_link.owner?
     end
     return false
+  end
+  
+  #check if the user is a manager of community(param)
+  def manager? (community)
+    community.manager_id == id
+  end
+  
+  #check if the user has created this community(param)
+  def created? (community)
+    community.created_by == id
   end
   
   def verified?

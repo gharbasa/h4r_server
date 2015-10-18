@@ -13,9 +13,15 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:house_pic][:created_by].nil?
+       params[:house_pic][:created_by] = current_user.id
+    end 
+    
     if(params[:house_pic][:created_by] != current_user.id)
-      puts "Login user is different from created_by user attribute in request payload."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
       return
     end
     
@@ -30,12 +36,14 @@ class ApiV1::HousePicsController < ApiV1::BaseController
         #UserMailer.welcome_email(@user).deliver_now #deliver_later
         render 'show', :status => :created
       else
-        print @house_pic.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house_pic.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      print "User is neither admin nor house owner"
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner"
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -45,8 +53,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
 
   def update
     @house_pic = HousePic.find(params[:id])
-    @house = @house_pic.house
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
+    if canUserUpdate? @house_pic # only house owner or admin can upload pics
       @house_pic.updated_by = current_user.id 
       processPicture if !params[:house_pic][:picture].nil?
       
@@ -54,30 +61,37 @@ class ApiV1::HousePicsController < ApiV1::BaseController
         flash[:notice] = "House Pic Processed successfully!"
         render 'show', :status => :ok
       else
-        print @house_pic.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house_pic.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      print "User is neither admin nor house owner"
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner"
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
 
   
   def destroy
     @house_pic = HousePic.find(params[:id])
-    @house = @house_pic.house
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
+    if canUserUpdate? @house_pic # only house owner or admin can upload pics
       if @house_pic.destroy
         render 'destroy', :status => :ok
       else
-        print @house_pic.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house_pic.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      print "User is neither admin nor house owner"
-      render 'errors', :status => :unprocessable_entity    
+      @errMsg = "User is neither admin nor house owner"
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity    
     end
+  end
+  
+  def canUserUpdate? house_pic
+    current_user.admin? || current_user.owner?(house_pic.house)
   end
   
   def processPicture

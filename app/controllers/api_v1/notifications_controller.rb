@@ -30,13 +30,25 @@ class ApiV1::NotificationsController < ApiV1::BaseController
   end
   
   def create
+    if params[:notification][:created_by].nil?
+       params[:notification][:created_by] = current_user.id
+    end 
+    
+    if(params[:notification][:created_by] != current_user.id)
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
     @notification = Notification.create(params[:notification])
     @notification.created_by = current_user.id 
     if @notification.save
       render 'show', :status => :created
     else
-      print @notification.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -52,11 +64,14 @@ class ApiV1::NotificationsController < ApiV1::BaseController
         flash[:notice] = "Notification updated!"
         render 'show', :status => :ok
       else
-        print @notification.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @notification.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Only admin update notification"
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -66,8 +81,9 @@ class ApiV1::NotificationsController < ApiV1::BaseController
       @notification.deactivate! 
       render 'destroy', :status => :ok
     else
-      print @notification.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @notification.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   

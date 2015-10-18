@@ -13,9 +13,15 @@ class ApiV1::HousesController < ApiV1::BaseController
   end
   
   def create
+    
+    if params[:house][:created_by].nil?
+       params[:house][:created_by] = current_user.id
+    end 
+    
     if(params[:house][:created_by] != current_user.id)
-      puts "Login user is different from created_by user attribute in request payload."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "Login user is different from created_by user attribute in request payload."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
       return
     end
 
@@ -25,8 +31,9 @@ class ApiV1::HousesController < ApiV1::BaseController
     if @house.save
       render 'show', :status => :created
     else
-      print @house.errors.full_messages
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = @house.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -42,12 +49,14 @@ class ApiV1::HousesController < ApiV1::BaseController
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
-        print @house.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      puts "User is neither admin nor house owner."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -58,7 +67,7 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.updated_by = current_user.id
       @house.verified = true
       if @house.save
-        flash[:house] = "House is been successfully verified!"
+        flash[:house] = "House has been successfully verified!"
         @owner = @house.owner
         if !@owner.nil?
           #send email to house owner  
@@ -66,12 +75,14 @@ class ApiV1::HousesController < ApiV1::BaseController
         end
         render 'show', :status => :ok
       else
-        print @house.errors.full_messages
-        render 'errors', :status => :unprocessable_entity
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
       end
     else
-      puts "User is not admin."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is not admin."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -81,8 +92,9 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.deactivate! 
       render 'destroy', :status => :ok
     else
-      puts "User is neither admin nor house owner."
-      render 'errors', :status => :unprocessable_entity
+      @errMsg = "User is neither admin nor house owner."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
     end
   end
   
@@ -94,6 +106,7 @@ class ApiV1::HousesController < ApiV1::BaseController
                                           .or(houses[:addr2].matches("%#{params[:address]}%"))
                                           .or(houses[:addr3].matches("%#{params[:address]}%"))
                                           .or(houses[:addr4].matches("%#{params[:address]}%"))
+                                          .or(houses[:name].matches("%#{params[:address]}%"))
                                           )
               else 
                  []
