@@ -1,5 +1,3 @@
-object @user_session
-child :user do
-  attributes :fname, :mname, :lname, :email
-end
-	
+object @user
+    extends 'api_v1/users/base'
+           

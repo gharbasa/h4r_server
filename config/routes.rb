@@ -50,7 +50,10 @@ H4R::Application.routes.draw do
     end
     
     resources :usersession, :only => [:index, :show, :create, :destroy] do
-    
+      collection do
+        #put :reorder
+        get :all
+      end
     end
     
     resources :houses, :only => [:index, :show, :create, :update, :destroy] do

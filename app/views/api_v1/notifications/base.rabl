@@ -5,4 +5,6 @@ attributes :id,
            :active, 
            :created_by, 
            :updated_by,
-           :priority
+           :priority,
+           :updated_at,
+           :created_at

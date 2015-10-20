@@ -8,16 +8,20 @@ class ApiV1::UsersessionController < ApiV1::BaseController
   end
 
   def index
-    @user_sessions = User.all
+    @user = current_user
+  end
+  
+  def all #TODO: Pending, not working
+    @user_sessions = Usersession.all
   end
   
   def show
-    @user_session = Usersession.find(params[:id])
+    @user = current_user
   end
   
   def create
     #Following code is temporary
-    @user = User.find_by_login(params[:login])
+    @user = User.find_by_login(params[:usersession][:login])
     if @user.inactive?
       @errMsg = "Inactive user " + @user.email + " is trying to login. Login rejected."
       #print errMsg

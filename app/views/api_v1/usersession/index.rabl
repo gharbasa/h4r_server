@@ -1,5 +1,2 @@
-collection @user_sessions
-	
-child :user do
-  attributes :id, :fname, :mname, :lname, :email
-end
+object @user
+    extends 'api_v1/users/base'
