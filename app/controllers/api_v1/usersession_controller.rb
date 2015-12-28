@@ -9,6 +9,13 @@ class ApiV1::UsersessionController < ApiV1::BaseController
 
   def index
     @user = current_user
+    if(@user != nil)
+      render 'index'
+    else
+      @errMsg = "User session is not valid"
+      print @errMsg
+      render 'error', :status => :forbidden
+    end
   end
   
   def all #TODO: Pending, not working

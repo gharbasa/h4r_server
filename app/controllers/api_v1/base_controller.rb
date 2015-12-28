@@ -62,10 +62,9 @@ class ApiV1::BaseController < ApplicationController
     def current_user
       return @current_user if defined?(@current_user)
       if(current_user_session != nil)
-        @current_user = (current_user_session && current_user_session.user)# || login_from_basic_auth.user
+        @current_user = current_user_session.user# || login_from_basic_auth.user
       else 
         @current_user = nil #login_from_basic_auth.user
-        print "User is not logged-in, not a valid session."
         #render 'errors', :status => :unprocessable_entity
       end
     end
