@@ -7,5 +7,11 @@ attributes :id,
            :adhaar_no,
            :created_by,
            :updated_by,
-           :avatar
+           :avatar,
+           :login,
+           :phone1,
+           :addr1,
+           :addr2,
+           :addr3,
+           :addr4
            
