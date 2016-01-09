@@ -12,12 +12,17 @@ class User < ActiveRecord::Base
   has_many :houses, through: :user_house_links
   has_many :notifications
   has_many :communities, class_name: "Community", foreign_key: "manager_id"
+  module USER_AVATAR_SETTINGS
+    DEFAULT_AVATAR_URL = "/system/:attachment/default.png" #"/images/:style/missing.png"
+    PROCESSED_DEFAULT_AVATAR_URL = "/system/avatars/default.png"
+    LOCATION = ":rails_root/public/system/:attachment/:username.:extension"
+  end
   
   #default location of avatars are /Users/abedali/eclipse/workspace1/h4r_backend/public/system/users/avatars/000/000/001  
   has_attached_file :avatar, 
-                    :path => ":rails_root/public/system/:attachment/:username.:extension",
+                    :path => USER_AVATAR_SETTINGS::LOCATION,
                     #:url  => "/:attachment/:username.:extension",
-                    styles: { medium: "300x300>", thumb: "100x100>" }, default_url: "/images/:style/missing.png"
+                    styles: { medium: "300x300>", thumb: "100x100>" }, default_url: USER_AVATAR_SETTINGS::DEFAULT_AVATAR_URL
   #validates_with AttachmentSizeValidator, attributes: :avatar, less_than: 1.megabytes
   validates_attachment :avatar, 
         content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }, 
@@ -168,6 +173,11 @@ class User < ActiveRecord::Base
     self.ndelete = true
     save
   end
+  
+  def self.isDefaultAvatar (url)
+    return url == USER_AVATAR_SETTINGS::PROCESSED_DEFAULT_AVATAR_URL
+  end
+  
   #def password
   #  @password ||= Password.new(password_hash)
   #end

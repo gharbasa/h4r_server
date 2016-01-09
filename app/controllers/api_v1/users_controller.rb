@@ -16,8 +16,6 @@ class ApiV1::UsersController < ApiV1::BaseController
 
     processAvatar if !params[:user][:avatar].nil?
     @user = User.create(params[:user])
-    
-    
     if @user.save
       #if !(current_user || false)
         #create session and login the user by default
@@ -60,7 +58,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         #TODO: Send him email notification
         render 'show', :status => :ok
       else
-        print @user.errors.full_messages
+        @errMsg = @user.errors.full_messages
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -120,10 +118,22 @@ class ApiV1::UsersController < ApiV1::BaseController
   end
   
   def processAvatar
-    data = StringIO.new(Base64.decode64(params[:user][:avatar][:data]))
+    avatar = params[:user][:avatar]
+    #if User.isDefaultAvatar avatar
+    #  params[:user][:avatar] = ""
+    #  return
+    #end
+    
+    if (avatar.is_a?(String)) #Its a URL
+      print "No image base64 data in the avatar image, ignore processing image."
+      params[:user][:avatar] = ""
+      return 
+    end
+    
+    data = StringIO.new(Base64.decode64(avatar[:data]))
     data.class.class_eval { attr_accessor :original_filename, :content_type }
-    data.original_filename = params[:user][:avatar][:filename]
-    data.content_type = params[:user][:avatar][:content_type]
+    data.original_filename = avatar[:filename]
+    data.content_type = avatar[:content_type]
     params[:user][:avatar] = data
   end
 end
