@@ -14,10 +14,8 @@ class ApiV1::UsersController < ApiV1::BaseController
   def create
     params[:user][:created_by] = (current_user == nil)? nil:current_user.id
 
-    processAvatar if !params[:user][:avatar].nil?
+    processAvatar "new"
     @user = User.create(params[:user])
-    
-    
     if @user.save
       #if !(current_user || false)
         #create session and login the user by default
@@ -52,7 +50,7 @@ class ApiV1::UsersController < ApiV1::BaseController
     if current_user_session.user.id == @user.id || current_user.admin?
       @user.updated_by = current_user.id
       #@user.avatar = processAvatar if !params[:user][:avatar].nil? 
-      processAvatar if !params[:user][:avatar].nil?
+      processAvatar "update"
       
       if @user.update_attributes(params[:user])
         flash[:notice] = "Account updated!"
@@ -60,7 +58,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         #TODO: Send him email notification
         render 'show', :status => :ok
       else
-        print @user.errors.full_messages
+        @errMsg = @user.errors.full_messages
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -119,11 +117,29 @@ class ApiV1::UsersController < ApiV1::BaseController
     
   end
   
-  def processAvatar
-    data = StringIO.new(Base64.decode64(params[:user][:avatar][:data]))
+  def processAvatar (method)
+    
+    if(method == "new") #default avatar for the newly registered user.
+      print "Its a new user registration, assign default avatar."
+      avatar = {:data => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR,
+                :filename => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILENAME,
+                :content_type => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILETYPE
+              }
+      params[:user][:avatar] = avatar 
+    end
+    
+    avatar = params[:user][:avatar]
+    
+    if (avatar.is_a?(String)) #Its a URL
+      print "No image base64 data in the avatar image, ignore processing image."
+      params[:user][:avatar] = ""
+      return 
+    end
+    
+    data = StringIO.new(Base64.decode64(avatar[:data]))
     data.class.class_eval { attr_accessor :original_filename, :content_type }
-    data.original_filename = params[:user][:avatar][:filename]
-    data.content_type = params[:user][:avatar][:content_type]
+    data.original_filename = avatar[:filename]
+    data.content_type = avatar[:content_type]
     params[:user][:avatar] = data
   end
 end
