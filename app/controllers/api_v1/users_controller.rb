@@ -14,7 +14,7 @@ class ApiV1::UsersController < ApiV1::BaseController
   def create
     params[:user][:created_by] = (current_user == nil)? nil:current_user.id
 
-    processAvatar if !params[:user][:avatar].nil?
+    processAvatar "new"
     @user = User.create(params[:user])
     if @user.save
       #if !(current_user || false)
@@ -50,7 +50,7 @@ class ApiV1::UsersController < ApiV1::BaseController
     if current_user_session.user.id == @user.id || current_user.admin?
       @user.updated_by = current_user.id
       #@user.avatar = processAvatar if !params[:user][:avatar].nil? 
-      processAvatar if !params[:user][:avatar].nil?
+      processAvatar "update"
       
       if @user.update_attributes(params[:user])
         flash[:notice] = "Account updated!"
@@ -117,12 +117,18 @@ class ApiV1::UsersController < ApiV1::BaseController
     
   end
   
-  def processAvatar
+  def processAvatar (method)
+    
+    if(method == "new") #default avatar for the newly registered user.
+      print "Its a new user registration, assign default avatar."
+      avatar = {:data => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR,
+                :filename => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILENAME,
+                :content_type => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILETYPE
+              }
+      params[:user][:avatar] = avatar 
+    end
+    
     avatar = params[:user][:avatar]
-    #if User.isDefaultAvatar avatar
-    #  params[:user][:avatar] = ""
-    #  return
-    #end
     
     if (avatar.is_a?(String)) #Its a URL
       print "No image base64 data in the avatar image, ignore processing image."
