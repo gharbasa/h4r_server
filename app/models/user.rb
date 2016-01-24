@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
     GUEST        = 0 #default
     ADMIN        = 1 << 16 #100000000=256
     TENANT       = 1 << 15 #010000000
-    LAND_LORG    = 1 << 14 #001000000
+    LAND_LORD    = 1 << 14 #001000000
     ACCOUNTANT   = 1 << 13
     PROPERTY_MGMT_MGR = 1 << 12 #Property management manager
     PROPERTY_MGMT_EMP  = 1 << 11 #Property management employee

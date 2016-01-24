@@ -16,7 +16,7 @@ class HouseObserver < ActiveRecord::Observer
   private
   def make_user_house_owner (house)
     user_house_link = UserHouseLink.create(:user_id => house.created_by, :house_id => house.id,
-                                         :role => User::USER_ACL::LAND_LORG, :created_by => house.created_by)
+                                         :role => User::USER_ACL::LAND_LORD, :created_by => house.created_by)
     if user_house_link.save
       puts "UserHouseLink has been created."
     end
