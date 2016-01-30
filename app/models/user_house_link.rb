@@ -15,7 +15,7 @@ class UserHouseLink < ActiveRecord::Base
   end
   
   def owner?
-    role == User::USER_ACL::LAND_LORG
+    role == User::USER_ACL::LAND_LORD
   end
 
 end

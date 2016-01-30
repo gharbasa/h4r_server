@@ -20,9 +20,9 @@ class ApiV1::NotificationsController < ApiV1::BaseController
     #  end
      # @notifications = Notification.where(:active => true, :user => user)
      if(@user)
-       @notifications = Notification.where(:user => @user)
+       @notifications = Notification.where(:user => @user, :active => true)
      elsif @notification_type 
-       @notifications = Notification.where(:notification_type => @notification_type)
+       @notifications = Notification.where(:notification_type => @notification_type, :active => true)
      else
        @notifications = Notification.all
      end
@@ -85,6 +85,20 @@ class ApiV1::NotificationsController < ApiV1::BaseController
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
+  end
+  
+  def inactivate
+    @notification = Notification.find(params[:id]) 
+    @notification.active = false;
+    @notification.updated_by = current_user.id
+    if @notification.save
+        flash[:house] = "Notification has been successfully inactivated!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @notification.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
+      end
   end
   
   def load_notification_type
