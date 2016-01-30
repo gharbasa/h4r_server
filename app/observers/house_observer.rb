@@ -6,7 +6,7 @@ class HouseObserver < ActiveRecord::Observer
   end
 
   def after_update(house)
-    
+    notify_change_in_house(house)
   end
   
   def after_destroy(house)
@@ -19,6 +19,20 @@ class HouseObserver < ActiveRecord::Observer
                                          :role => User::USER_ACL::LAND_LORD, :created_by => house.created_by)
     if user_house_link.save
       puts "UserHouseLink has been created."
+    end
+  end
+  
+  def notify_change_in_house (house)
+    notificationtype = NotificationType.findUserHouseLinkUpdate
+    unless (notificationtype.nil?)
+      notification = Notification.create(:user_id => house.owner.id, :notification_type_id =>notificationtype.id,
+                                         :retries_count => 0, :active => 1)
+      if notification.save 
+        puts "notify_change_in_house::UserNotification has been created."
+        #UserMailer.house_verified(@house, @owner).deliver_now #deliver_later
+      else
+        puts "notify_change_in_house::ERROR:Problem creating UserNotification."
+      end
     end
   end
   

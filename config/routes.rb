@@ -32,7 +32,11 @@ H4R::Application.routes.draw do
       member do
         put :verified #this is only for admin access
       end
-      resources :notifications, :only => [:index]
+      resources :notifications, :only => [:index] do
+        member do
+          post :inactivate
+        end
+      end
       resources :houses, :only => [:index]
       resources :user_house_links, :only => [:index]
       resources :user_house_contracts, :only => [:index]
@@ -42,7 +46,9 @@ H4R::Application.routes.draw do
     end
         
     resources :notifications, :only => [:index, :show, :create, :update, :destroy] do
-    
+      member do
+        post :inactivate
+      end
     end
     
     resources :notification_types, :only => [:index, :show, :create, :update, :destroy] do
