@@ -63,6 +63,8 @@ H4R::Application.routes.draw do
       end
       member do
         put :verified
+        post :inactivate
+        post :activate
       end
       resources :user_house_links, :only => [:index]
       resources :house_pics, :only => [:index]

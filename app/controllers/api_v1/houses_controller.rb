@@ -86,6 +86,60 @@ class ApiV1::HousesController < ApiV1::BaseController
     end
   end
   
+  #To mark that the house is inactivated, email send to owner?
+  def inactivate
+    @house = House.find(params[:id]) 
+    if current_user.owner?(@house) # only admin can mark house as verified
+      @house.updated_by = current_user.id
+      @house.active = false
+      if @house.save
+        flash[:house] = "House has been successfully inactivated!"
+        
+        #@owner = @house.owner
+        #if !@owner.nil?
+        #  #send email to house owner  
+        #  UserMailer.house_verified(@house, @owner).deliver_now #deliver_later  
+        #end
+        render 'show', :status => :ok
+      else
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not the owner of the house."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  #To mark that the house is inactivated, email send to owner?
+  def activate
+    @house = House.find(params[:id]) 
+    if current_user.owner?(@house) # only admin can mark house as verified
+      @house.updated_by = current_user.id
+      @house.active = true
+      if @house.save
+        flash[:house] = "House has been successfully activated!"
+        
+        #@owner = @house.owner
+        #if !@owner.nil?
+        #  #send email to house owner  
+        #  UserMailer.house_verified(@house, @owner).deliver_now #deliver_later  
+        #end
+        render 'show', :status => :ok
+      else
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not the owner of the house."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
   def destroy
     @house = House.find(params[:id])
     if current_user.admin? || current_user.owner?(@house) # only house owner or admin can create
