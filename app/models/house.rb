@@ -6,6 +6,7 @@ class House < ActiveRecord::Base
   belongs_to :community
   has_many :house_pics #, dependent: :destroy
   has_many :user_house_links
+  has_many :house_notes
   has_many :users, through: :user_house_links
   
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
