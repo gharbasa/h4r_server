@@ -1,5 +1,5 @@
 class ApiV1::HousesController < ApiV1::BaseController
-  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :search, :verified]
+  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :search, :verified,:notes, :create_note]
   skip_before_action :verify_authenticity_token
   before_filter :load_user, :only => [:index]
   
@@ -48,19 +48,23 @@ class ApiV1::HousesController < ApiV1::BaseController
   
   def create_note
       print params[:note]
-      @house = House.find(params[:id])  
-      @housenote = HouseNote.create(:house_id => @house.id,
+      @house = House.find(params[:id])
+      if(@house)  
+        @housenote = HouseNote.create(:house_id => @house.id,
                                   :note => params[:note],
-                                  :created_by => params[:created_by]
+                                  :created_by => current_user.id
                                   )
-      
-      
-      if(@housenote.save)
-        render 'create_note', :status => :created  
-      else 
-        @errMsg = @house.errors.full_messages
+        if(@housenote.save)
+          render 'create_note', :status => :created  
+        else 
+          @errMsg = @house.errors.full_messages
+          print @errMsg 
+          render 'error', :status => :unprocessable_entity  
+        end
+      else
+        @errMsg = "House not found."
         print @errMsg 
-        render 'error', :status => :unprocessable_entity  
+        render 'error', :status => :unprocessable_entity
       end
   end
   
