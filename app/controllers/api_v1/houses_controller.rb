@@ -37,37 +37,6 @@ class ApiV1::HousesController < ApiV1::BaseController
     end
   end
   
-  def notes
-    @house = House.find(params[:id])
-    if(@house) 
-      @notes = @house.house_notes    
-    else
-      render 'error', :status => :unprocessable_entity
-    end
-  end
-  
-  def create_note
-      print params[:note]
-      @house = House.find(params[:id])
-      if(@house)  
-        @housenote = HouseNote.create(:house_id => @house.id,
-                                  :note => params[:note],
-                                  :created_by => current_user.id
-                                  )
-        if(@housenote.save)
-          render 'create_note', :status => :created  
-        else 
-          @errMsg = @house.errors.full_messages
-          print @errMsg 
-          render 'error', :status => :unprocessable_entity  
-        end
-      else
-        @errMsg = "House not found."
-        print @errMsg 
-        render 'error', :status => :unprocessable_entity
-      end
-  end
-  
   def show
     @house = House.find(params[:id])
   end

@@ -4,4 +4,8 @@ class HouseNote < ActiveRecord::Base
                   :house_id
   belongs_to :house
   
+  def deactivate!
+    self.active = false
+    save
+  end  
 end

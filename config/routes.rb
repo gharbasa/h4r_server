@@ -38,10 +38,7 @@ H4R::Application.routes.draw do
         end
       end
       resources :houses, :only => [:index] do
-        member do
-          get :notes, :only => [:notes]
-          post :create_note, :only => [:create_note]
-        end
+         resources :housenotes, :only => [:index, :show, :create, :update, :destroy]
       end
       resources :user_house_links, :only => [:index]
       resources :user_house_contracts, :only => [:index]
@@ -76,13 +73,13 @@ H4R::Application.routes.draw do
         put :verified
         post :inactivate
         post :activate
-        get :notes, :only => [:notes]
-        post :create_note, :only => [:create_note]
+        #get :notes, :only => [:notes]
+        #post :create_note, :only => [:create_note]
       end
       resources :user_house_links, :only => [:index]
       resources :house_pics, :only => [:index]
       resources :user_house_contracts, :only => [:index]
-      
+      resources :housenotes, :path => 'notes', :only => [:index, :show, :create, :update, :destroy]
     end
     
     resources :user_house_links, :only => [:index, :show, :create, :update, :destroy] do
