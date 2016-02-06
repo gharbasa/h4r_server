@@ -17,7 +17,8 @@ class ApiV1::HousenotesController < ApiV1::BaseController
       if(@house)  
         @note = HouseNote.create(:house_id => @house.id,
                                   :note => params[:note],
-                                  :created_by => current_user.id
+                                  :created_by => current_user.id,
+                                  :private => params[:private]
                                   )
         if(@note.save)
           render 'show', :status => :created  

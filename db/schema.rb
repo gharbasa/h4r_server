@@ -123,8 +123,9 @@ ActiveRecord::Schema.define(version: 20150827030447) do
   
   create_table :house_notes do |t|    #
     t.integer             :house_id,               :null => false
-    t.string              :note,                   :null => false
+    t.text              :note,                     :null => false
     t.boolean             :active,                 :default => true
+    t.boolean             :private,                 :default => false
     t.integer   :created_by
     t.integer   :updated_by
     t.timestamps
