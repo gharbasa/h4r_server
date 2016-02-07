@@ -20,8 +20,9 @@ class House < ActiveRecord::Base
   def owner
     house_owner = nil
     user_house_links.each do |link|
-      link.owner?
-      house_owner = link.user
+      if link.owner? && (house_owner.nil?)
+        house_owner = link.user
+      end
     end
     house_owner
   end
@@ -34,5 +35,15 @@ class House < ActiveRecord::Base
     self.active = false
     save
   end
-
+  
+  #Non-house owner can only view public and his created notes.
+  def public_and_own_house_notes user
+    public_house_notes = []
+    house_notes.each do |house_note|
+      if !(house_note.private) || (user.id == house_note.created_by) 
+        public_house_notes.push(house_note)
+      end
+    end
+    public_house_notes
+  end
 end

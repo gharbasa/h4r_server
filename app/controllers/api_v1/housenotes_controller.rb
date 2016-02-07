@@ -5,7 +5,11 @@ class ApiV1::HousenotesController < ApiV1::BaseController
   
   def index
     if(@house)
-       @notes = @house.house_notes
+       if(current_user.owner? @house)
+         @notes = @house.house_notes #House owner can view all the house notes
+       else
+         @notes = @house.public_and_own_house_notes current_user #Non-house owner can only view public and his created notes.
+       end
     else
       @errMsg = "House not found."
       print @errMsg 
