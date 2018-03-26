@@ -29,7 +29,7 @@ class ApiV1::UsersessionController < ApiV1::BaseController
   def create
     #Following code is temporary
     @user = User.find_by_login(params[:usersession][:login])
-    if @user.inactive?
+    if @user && @user.inactive?
       @errMsg = "Inactive user " + @user.email + " is trying to login. Login rejected."
       #print errMsg
       logger.info(@errMsg)
