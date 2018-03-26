@@ -1,6 +1,6 @@
 class ApiV1::NotificationTypesController < ApiV1::BaseController
-  #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :create, :show, :edit, :update, :destroy]
+  #before_filter :require_no_user, :only => [:index, :show]
+  before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
   
   def new
