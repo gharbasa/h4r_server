@@ -8,7 +8,8 @@ class ApiV1::NotificationTypesController < ApiV1::BaseController
   end
     
   def index
-    @notification_types = NotificationType.where(:active => true)
+    #@notification_types = NotificationType.where(:active => true)
+    @notification_types = NotificationType.all
   end
   
   def create

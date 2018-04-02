@@ -43,14 +43,14 @@ class ApiV1::HousesController < ApiV1::BaseController
 
   def update
     @house = House.find(params[:id]) 
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can create
+    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can update
       @house.updated_by = current_user.id
       if @house.update_attributes(params[:house])
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
         @errMsg = @house.errors.full_messages
-        print @errMsg 
+        print @errMsg
         render 'error', :status => :unprocessable_entity
       end
     else

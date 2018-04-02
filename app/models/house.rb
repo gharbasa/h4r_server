@@ -1,8 +1,8 @@
 class House < ActiveRecord::Base
   attr_accessible :name, :addr1, :addr2, :addr3, :addr4, :no_of_portions, :no_of_floors, 
-                  :total_pics, :processing_fee, :verified, 
+                  :total_pics, :processing_fee, :verified,:active, 
                   :created_by,:updated_by, :created_at, :updated_at, :community_id
-
+                  
   belongs_to :community
   has_many :house_pics #, dependent: :destroy
   has_many :user_house_links
