@@ -1,9 +1,9 @@
 class ApiV1::HousePicsController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy]
+  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :create]
   skip_before_action :verify_authenticity_token
-  before_filter :load_house, :only => [:index]
-      
+  before_filter :load_house, :only => [:index, :create]
+  
   def index
     if(@house)
        @house_pics = @house.house_pics
@@ -16,10 +16,10 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     
     if params[:house_pic][:created_by].nil?
        params[:house_pic][:created_by] = current_user.id
-    end 
+    end
     
-    if(params[:house_pic][:created_by] != current_user.id)
-      @errMsg = "Login user is different from created_by user attribute in request payload."
+    if((@house.created_by != current_user.id) && !(current_user.admin?))
+      @errMsg = "Login user is different from house created user and not an admin user."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
       return
@@ -28,7 +28,6 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     processPicture if !params[:house_pic][:picture].nil?
     @house_pic = HousePic.create(params[:house_pic])
     @house_pic.created_by = (current_user == nil)? nil:current_user.id
-    @house = House.find(params[:house_pic][:house_id])
     
     if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
       
