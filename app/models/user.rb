@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   end # the configuration block is optional
   
   def admin?
-    #print "Lets check if the user is admin=" + acl.to_s + ":" + (acl & USER_ACL::ADMIN).to_s
+    #print "Lets check if the user is admin=" + role.to_s + "," + (role & USER_ACL::ADMIN).to_s
     (role & USER_ACL::ADMIN) == USER_ACL::ADMIN
   end
   
