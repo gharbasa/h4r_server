@@ -1,5 +1,5 @@
 class ApiV1::HousesController < ApiV1::BaseController
-  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :search, :verified]
+  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :search, :verified,:notes, :create_note]
   skip_before_action :verify_authenticity_token
   before_filter :load_user, :only => [:index]
   

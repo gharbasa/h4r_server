@@ -121,6 +121,16 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.timestamps
   end
   
+  create_table :house_notes do |t|    #
+    t.integer             :house_id,               :null => false
+    t.text              :note,                     :null => false
+    t.boolean             :active,                 :default => true
+    t.boolean             :private,                 :default => false
+    t.integer   :created_by
+    t.integer   :updated_by
+    t.timestamps
+  end
+  
   create_table :property_mgmts do |t|    #Property management companies
     t.string     :name,                :null => false
     t.string     :addr1,               :null => false   #street name/colony name
