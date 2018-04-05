@@ -1,7 +1,7 @@
 class House < ActiveRecord::Base
   attr_accessible :name, :addr1, :addr2, :addr3, :addr4, :no_of_portions, :no_of_floors, 
                   :total_pics, :processing_fee, :verified,:active, 
-                  :created_by,:updated_by, :created_at, :updated_at, :community_id
+                  :created_by,:updated_by, :created_at, :updated_at, :community_id, :description
                   
   belongs_to :community
   has_many :house_pics #, dependent: :destroy
@@ -39,7 +39,7 @@ class House < ActiveRecord::Base
   #Non-house owner can only view public and his created notes.
   def public_and_own_house_notes user
     public_house_notes = []
-    house_notes.each do |house_note|
+    house_notes.order(created_at: :desc).each do |house_note|
       if !(house_note.private) || (user.id == house_note.created_by) 
         public_house_notes.push(house_note)
       end

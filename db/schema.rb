@@ -68,20 +68,21 @@ ActiveRecord::Schema.define(version: 20150827030447) do
   end
   
   create_table :houses do |t|
-    t.string     :name,                :null => false
-    t.string     :addr1,               :null => false   #street name/colony name
-    t.string     :addr2,               :null => false   #house number
-    t.string     :addr3,               :null => false    #town/city name
-    t.string     :addr4,               :null => false    #state
-    t.integer    :no_of_portions,      :default => 1
-    t.integer    :no_of_floors,        :default => 1
-    t.integer    :total_pics,          :default => 0
-    t.float      :processing_fee,      :default => 0
-    t.boolean    :verified,            :default => false #Verify house address
-    t.boolean   :active,          :default => true #House active?
-    t.integer   :community_id    #Can be null
-    t.integer   :created_by  #user_id
-    t.integer   :updated_by  #user_id
+    t.string      :name,                :null => false
+    t.string      :addr1,               :null => false   #street name/colony name
+    t.string      :addr2,               :null => false   #house number
+    t.string      :addr3,               :null => false    #town/city name
+    t.string      :addr4,               :null => false    #state
+    t.string      :description,         :null => true     #state
+    t.integer     :no_of_portions,      :default => 1
+    t.integer     :no_of_floors,        :default => 1
+    t.integer     :total_pics,          :default => 0
+    t.float       :processing_fee,      :default => 0
+    t.boolean     :verified,            :default => false #Verify house address
+    t.boolean    :active,          :default => true #House active?
+    t.integer    :community_id    #Can be null
+    t.integer    :created_by  #user_id
+    t.integer    :updated_by  #user_id
     t.timestamps
   end
   
