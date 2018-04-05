@@ -6,9 +6,9 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   
   def index
     if(@house)
-       @house_pics = @house.house_pics
+       @house_pics = @house.house_pics.order(created_at: :desc)
     else
-      @house_pics = HousePic.all
+      @house_pics = HousePic.all.order(created_at: :desc)
     end
   end
   
