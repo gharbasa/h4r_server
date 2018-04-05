@@ -20,7 +20,7 @@ class ApiV1::NotificationsController < ApiV1::BaseController
     #  end
      # @notifications = Notification.where(:active => true, :user => user)
      if(@user)
-       @notifications = Notification.where(:user => @user, :active => true)
+       @notifications = Notification.where(:user => @user, :active => true).order(created_at: :desc)
      elsif @notification_type 
        @notifications = Notification.where(:notification_type => @notification_type, :active => true)
      else
