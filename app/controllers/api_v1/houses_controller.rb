@@ -13,20 +13,16 @@ class ApiV1::HousesController < ApiV1::BaseController
   end
   
   def create
-    
-    if params[:house][:created_by].nil?
-       params[:house][:created_by] = current_user.id
-    end 
-    
-    if(params[:house][:created_by] != current_user.id)
-      @errMsg = "Login user is different from created_by user attribute in request payload."
+    params[:house][:created_by] = current_user.id
+     
+    if(params[:house][:name].nil? || params[:house][:name] == "") 
+      @errMsg = 'House name can not be empty'
       print @errMsg 
       render 'error', :status => :unprocessable_entity
       return
     end
-
+    
     @house = House.create(params[:house])
-    #@house.created_by = current_user.id
     @house.verified = false
     if @house.save
       render 'show', :status => :created
