@@ -17,14 +17,84 @@ class House < ActiveRecord::Base
     VERIFIED = 1
   end           
   
-  def owner
-    house_owner = nil
+  def guest
+    user_obj = nil
     user_house_links.each do |link|
-      if link.owner? && (house_owner.nil?)
-        house_owner = link.user
+      if link.guest? && (user_obj.nil?)
+        user_obj = link.user
       end
     end
-    house_owner
+    user_obj
+  end
+  
+  def tenant
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.tenant? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def land_lord
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.land_lord? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def accountant
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.accountant? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def property_mgmt_mgr
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.property_mgmt_mgr? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def property_mgmt_emp
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.property_mgmt_emp? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def agency_collection_emp
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.agency_collection_emp? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
+  def agency_collection_mgr
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.agency_collection_mgr? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
   end
   
   def verified?

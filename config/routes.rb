@@ -31,6 +31,8 @@ H4R::Application.routes.draw do
       end
       member do
         put :verified #this is only for admin access
+        put :promote2Admin  #this is only for admin access to promote user to admin role
+        put :demoteFromAdmin  #this is only for admin access to promote user to admin role
       end
       resources :notifications, :only => [:index] do
         member do

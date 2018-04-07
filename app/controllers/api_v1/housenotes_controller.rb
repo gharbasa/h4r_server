@@ -5,7 +5,7 @@ class ApiV1::HousenotesController < ApiV1::BaseController
   
   def index
     if(@house)
-       if(current_user.owner? @house)
+       if(current_user.land_lord? @house)
          @notes = @house.house_notes.order(created_at: :desc) #House owner can view all the house notes
        else
          @notes = @house.public_and_own_house_notes current_user #Non-house owner can only view public and his created notes.
@@ -44,7 +44,7 @@ class ApiV1::HousenotesController < ApiV1::BaseController
 
   def destroy
     @housenote = HouseNote.find(params[:id])
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can create
+    if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can create
       @housenote.delete 
       render 'destroy', :status => :ok
     else

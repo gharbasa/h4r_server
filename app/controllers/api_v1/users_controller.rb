@@ -1,6 +1,6 @@
 class ApiV1::UsersController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified]
+  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified, :promote2Admin, :demoteFromAdmin]
   skip_before_action :verify_authenticity_token
   
   def new
@@ -85,6 +85,46 @@ class ApiV1::UsersController < ApiV1::BaseController
       end
     else
       @errMsg = "User is not admin."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  def promote2Admin
+    @user = User.find(params[:id]) 
+    if @user && current_user.admin? # only admin can mark house as verified
+      @user.updated_by = current_user.id
+      @user.role = User::USER_ACL::ADMIN
+      if @user.save
+        flash[:user] = "User is been successfully promoted!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not admin or not a valid user input."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  def demoteFromAdmin
+    @user = User.find(params[:id]) 
+    if @user && current_user.admin? # only admin can mark house as verified
+      @user.updated_by = current_user.id
+      @user.role = User::USER_ACL::GUEST
+      if @user.save
+        flash[:house] = "User is been successfully demoted!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not admin or not a valid user input."
       print @errMsg
       render 'error', :status => :unprocessable_entity
     end
