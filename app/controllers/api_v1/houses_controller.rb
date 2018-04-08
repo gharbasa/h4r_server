@@ -6,9 +6,9 @@ class ApiV1::HousesController < ApiV1::BaseController
   def index
     if(@user)
        #@UserHouseLinks = UserHouseLink.where(:user => @user)#House.where(:user_house_links.user => @user)
-       @houses = @user.houses
+       @houses = @user.houses.order(name: :asc)
     else
-      @houses = House.all
+      @houses = House.all.order(name: :asc)
     end
   end
   

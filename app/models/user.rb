@@ -127,6 +127,10 @@ class User < ActiveRecord::Base
     community.created_by == id
   end
   
+  def house_created? (house)
+    house.created_by == id
+  end
+  
   def verified?
     verified
   end
