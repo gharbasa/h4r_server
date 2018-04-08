@@ -154,6 +154,9 @@ class User < ActiveRecord::Base
     confirmed
   end
   
+  def fullName 
+    lname + ", " + fname
+  end
 #  def activate!
 #    update_attributes(:active => true) #, :approved =>true, :confirmed => true)
 #  end
