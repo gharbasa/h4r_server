@@ -41,43 +41,86 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   end
 
   def update
-    @userhouselink = UserHouseLink.find(params[:id])
-    print "Current UserHouseLink record Id=" + @userhouselink.id.to_s
-    if isAuth(@userhouselink.house)
-      @userhouselink.updated_by = current_user.id
-      #check Update Type
-      permission = 0
-      if(params[:updateType] == "land_lord")
-          print "\n User wants to change landLord of the house"
-          permission = User::USER_ACL::LAND_LORD
-      elsif (params[:updateType] == "tenant")
-          print "\n User wants to change tenant of the house"
-          permission = User::USER_ACL::TENANT
-      end #end of main if
-      updatePermissionOfTheHouse(params[:updateType], permission)
-    else
+    house = House.find(params[:house_id])
+    if !isAuth(house)
       @errMsg = "User is not authorized to perform update on the house user link."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
+    
+    updateType = params[:updateType] #lets say update type is tenant
+    permission = 0
+    print "\n User wants to change #{updateType} of the house"
+    
+    if(updateType == "land_lord")
+      permission = User::USER_ACL::LAND_LORD
+    elsif (params[:updateType] == "tenant")
+      permission = User::USER_ACL::TENANT
+    elsif (params[:updateType] == "accountant")
+      permission = User::USER_ACL::ACCOUNTANT
+    elsif (params[:updateType] == "property_mgmt_mgr")
+      permission = User::USER_ACL::PROPERTY_MGMT_MGR
+    elsif (params[:updateType] == "property_mgmt_emp")
+      permission = User::USER_ACL::PROPERTY_MGMT_EMP
+    elsif (params[:updateType] == "agency_coll_mgr")
+      permission = User::USER_ACL::AGENCY_COLLECTION_MGR
+    elsif (params[:updateType] == "agency_coll_emp")
+      permission = User::USER_ACL::AGENCY_COLLECTION_EMP
+    end #end of main if
+      
+    #if(params[updateType] == true) #Is there a previous tenant already associated with a house
+    org_user_id_param = "org_#{updateType}_id"
+    org_user_id = params[org_user_id_param]
+    if (org_user_id.nil?)
+      print "\n There is No previous #{updateType} to the house #{params[:house_id]}"  
+    else
+      user = User.find(org_user_id)
+      print "\n There is a previous #{updateType} to the house #{params[:house_id]}, its user #{user.fullName}"
+      @userhouselink = UserHouseLink.where(:user => user, :house => house).take #There is only one user/house combination
+    end
+    updateUserHouseLink(permission)
+    #else #There is no previous tenant associated with the house
+    #   updatePermissionOfTheHouse(permission)
+    #end
   end
   
-  def updatePermissionOfTheHouse (updateType, aclNumber)
-    userIdParam = updateType + "_id"
-    @user = User.find(params[userIdParam])
+  def updateUserHouseLink (aclNumber)
+    updateType = params[:updateType]
+    newUserIdParam = updateType + "_id"
+    newUserId = params[newUserIdParam]
     @house = House.find(params[:house_id])
-    print "\n Request is to make the user " +  @user.fullName + " #{updateType} of the house " + @house.name
-    @userhouselink_new = UserHouseLink.where(:user => @user, :house => @house).take #There is only one user/house combination
-    if !(@userhouselink_new.nil?) #house user link already exists
-      print "\n House and User link thats going to be promoted to #{updateType} is =" + @userhouselink_new.id.to_s
-      if(@userhouselink_new.send("#{updateType}?".to_sym))
-        print "\n User =" + @user.fullName + " is already a #{updateType} of the house " + @house.name + ", do nothing."  
-      else
-        print "\n Ok user #{@user.fullName} is not #{updateType} of the house #{@house.name}, lets update." 
-        @userhouselink_new.role = @userhouselink_new.role + aclNumber
-        @userhouselink_new.updated_by = current_user.id
+    if !(newUserId.nil?)
+      @user = User.find(newUserId)
+      print "\n Request is to make the user " +  @user.fullName + " #{updateType} of the house " + @house.name
+      @userhouselink_new = UserHouseLink.where(:user => @user, :house => @house).take #There is only one user/house combination
+      if !(@userhouselink_new.nil?) #house user link already exists
+        print "\n House and User link thats going to be promoted to #{updateType} is =" + @userhouselink_new.id.to_s
+        if(@userhouselink_new.send("#{updateType}?".to_sym))
+          print "\n User =" + @user.fullName + " is already a #{updateType} of the house " + @house.name + ", do nothing."  
+        else
+          print "\n Ok user #{@user.fullName} is not #{updateType} of the house #{@house.name}, lets update." 
+          @userhouselink_new.role = @userhouselink_new.role + aclNumber
+          @userhouselink_new.updated_by = current_user.id
+          if @userhouselink_new.save
+            flash[:user_house_link] = "\n House has been updated with the new #{updateType}"
+          else
+            @errMsg = "Problem updating house with new #{updateType}."
+            print @errMsg
+            @errMsg = @userhouselink_new.errors.full_messages
+            print @errMsg  
+            render 'error', :status => :unprocessable_entity
+            return      
+          end  
+        end
+      else 
+        print "\n House " + @house.name + " and User " + @user.fullName + " link never exists before"
+        @userhouselink_new = UserHouseLink.create(:user_id => params[newUserIdParam], :house_id => params[:house_id],
+                                                  :role => aclNumber,
+                                                  :created_by => current_user.id)
+        #@userhouselink_new.user_id = params[newUserIdParam]
+        #@userhouselink_new.role = aclNumber
         if @userhouselink_new.save
-          flash[:user_house_link] = "\n House has been updated with the new #{updateType}"
+          flash[:user_house_link] = "\n House and user association is created successfuly"
         else
           @errMsg = "Problem updating house with new #{updateType}."
           print @errMsg
@@ -85,31 +128,16 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
           print @errMsg  
           render 'error', :status => :unprocessable_entity
           return      
-        end  
-      end
-    else 
-      print "\n House " + @house.name + " and User " + @user.fullName + " link never exists before"
-      @userhouselink_new = UserHouseLink.create(:user_id => params[userIdParam], :house_id => params[:house_id],
-                                                :role => aclNumber,
-                                                :created_by => current_user.id)
-      #@userhouselink_new.user_id = params[userIdParam]
-      #@userhouselink_new.role = aclNumber
-      if @userhouselink_new.save
-        flash[:user_house_link] = "\n House and user association is created successfuly"
-      else
-        @errMsg = "Problem updating house with new #{updateType}."
-        print @errMsg
-        @errMsg = @userhouselink_new.errors.full_messages
-        print @errMsg  
-        render 'error', :status => :unprocessable_entity
-        return      
-      end
-    end #end of updating user house association for the new user
+        end
+      end #end of updating user house association for the new user
+    else
+      print "\n User wants to remove #{updateType} from the house #{@house.name}"
+    end #end of check for new user
     
-    print "\n House and User link thats going to be demoted from #{updateType} is =" + @userhouselink.id.to_s
-    if(@userhouselink.send("#{updateType}?".to_sym))
-      print "\n Current user is a #{updateType} of the house, lets demote him."
+    if(!(@userhouselink.nil?) && @userhouselink.send("#{updateType}?".to_sym))
+      print "\n House and User link thats going to be demoted from #{updateType} is =" + @userhouselink.id.to_s
       @userhouselink.role = @userhouselink.role - aclNumber
+      @userhouselink.updated_by = current_user.id
       if(@userhouselink.role <= 0)
         print "\n Role of the Current user house link " + @userhouselink.id.to_s + " is zero. ignore it."
       end
@@ -124,7 +152,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
         return
       end
     else
-      print "\n Current user is not a #{updateType} of the house. Ignore and do nothing"
+      print "\n There is no #{updateType} to the house. Ignore and do nothing"
       flash[:user_house_link] = "\n User house link is updated successfully."
       render 'show', :status => :ok 
     end
