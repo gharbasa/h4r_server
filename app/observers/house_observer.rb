@@ -25,7 +25,7 @@ class HouseObserver < ActiveRecord::Observer
   def notify_change_in_house (house)
     notificationtype = NotificationType.findUserHouseLinkUpdate
     unless (notificationtype.nil?)
-      notification = Notification.create(:user_id => house.owner.id, :notification_type_id =>notificationtype.id,
+      notification = Notification.create(:user_id => house.land_lord.id, :notification_type_id =>notificationtype.id,
                                          :retries_count => 0, :active => 1)
       if notification.save 
         puts "notify_change_in_house::UserNotification has been created."

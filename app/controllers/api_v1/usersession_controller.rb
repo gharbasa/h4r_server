@@ -48,7 +48,7 @@ class ApiV1::UsersessionController < ApiV1::BaseController
     end
     #upto here
     
-    @user_session = Usersession.create(params[:usersession], :remember_me => true)
+    @user_session = Usersession.create(:login => params[:login], :password => params[:password], :remember_me => true)
     if @user_session.save
       render 'show', :status => :created
     else

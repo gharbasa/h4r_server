@@ -90,7 +90,10 @@ H4R::Application.routes.draw do
     end
     
     resources :user_house_contracts, :only => [:index, :show, :create, :update, :destroy] do
-      
+        member do
+           put :activate #this is only for admin access
+           put :deactivate #this is only for admin access
+        end
     end
     
     resources :house_pics, :only => [:index, :show, :create, :update, :destroy] do

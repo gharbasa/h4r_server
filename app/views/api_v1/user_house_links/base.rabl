@@ -12,7 +12,7 @@ attributes  :id,
             :created_by, 
             :updated_by
 
-child(:user => :user) { attributes :id, :fname,  :lname}
+child(:user => :user) { attributes :id, :fullName}
 child(:house => :house) { attributes :id, :name}
 
 attributes  :tenant? => :tenant,

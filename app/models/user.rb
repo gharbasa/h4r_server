@@ -7,7 +7,8 @@ class User < ActiveRecord::Base
                     :avatar
 
   include ActiveFlag
-  
+  include AclCheckOnRole
+
   has_many :user_house_links
   has_many :houses, through: :user_house_links
   has_many :notifications
@@ -32,18 +33,6 @@ class User < ActiveRecord::Base
         content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }, 
         size: { in: 0..1.megabytes }
   
-  module USER_ACL
-    GUEST        = 0 #default
-    ADMIN        = 1 << 16 #100000000=256
-    TENANT       = 1 << 15 #010000000
-    LAND_LORD    = 1 << 14 #001000000
-    ACCOUNTANT   = 1 << 13
-    PROPERTY_MGMT_MGR = 1 << 12 #Property management manager
-    PROPERTY_MGMT_EMP  = 1 << 11 #Property management employee
-    AGENCY_COLLECTION_EMP    = 1 << 10 #Collection agency emp
-    AGENCY_COLLECTION_MGR    = 1 << 9 #Collection agency mgr
-  end
-  
   module USER_SEX
     DEFAULT       = 0,
     MALE          = 1,
@@ -64,43 +53,6 @@ class User < ActiveRecord::Base
     c.crypto_provider = Authlogic::CryptoProviders::BCrypt
     c.validates_format_of_email_field_options = {:with => Authlogic::Regex.email_nonascii}
   end # the configuration block is optional
-  
-  def admin?
-    #print "Lets check if the user is admin=" + role.to_s + "," + (role & USER_ACL::ADMIN).to_s
-    (role & USER_ACL::ADMIN) == USER_ACL::ADMIN
-  end
-  
-  def guest?
-    (role & USER_ACL::GUEST) == USER_ACL::GUEST
-  end
-  
-  def tenant?
-    (role & USER_ACL::TENANT) == USER_ACL::TENANT
-  end
-  
-  def land_lord?
-    (role & USER_ACL::LAND_LORD) == USER_ACL::LAND_LORD
-  end
-  
-  def accountant?
-    (role & USER_ACL::ACCOUNTANT) == USER_ACL::ACCOUNTANT
-  end
-  
-  def property_mgmt_mgr?
-    (role & USER_ACL::PROPERTY_MGMT_MGR) == USER_ACL::PROPERTY_MGMT_MGR
-  end
-  
-  def property_mgmt_emp?
-    (role & USER_ACL::PROPERTY_MGMT_EMP) == USER_ACL::PROPERTY_MGMT_EMP
-  end
-  
-  def agency_collection_emp?
-    (role & USER_ACL::AGENCY_COLLECTION_EMP) == USER_ACL::AGENCY_COLLECTION_EMP
-  end
-  
-  def agency_collection_mgr?
-    (role & USER_ACL::AGENCY_COLLECTION_MGR) == USER_ACL::AGENCY_COLLECTION_MGR
-  end
   
   def otherRole?
     !(admin? && guest? && tenant? && land_lord? && accountant? &&

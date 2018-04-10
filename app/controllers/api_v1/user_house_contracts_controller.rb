@@ -6,14 +6,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   def index
       if (@user)
-        houselinks = @user.user_house_links
-        houselink_ids = []
-        houselinks.each do |t|
-          houselink_ids.push(t.id)
-        end
-        @user_house_contracts = UserHouseContract.where(user_house_link_id: houselink_ids)
+        @user_house_contracts = UserHouseContract.where(user: @user)
       elsif (@house)
-        @user_house_contracts = findHouseContracts @house
+        @user_house_contracts = UserHouseContract.where(house: @house)
       else
         @user_house_contracts = UserHouseContract.all
       end
@@ -92,6 +87,22 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
     end
   end
   
+  def activate
+    @user_house_contract = UserHouseContract.find(params[:id])
+    @userhouselink = @user_house_contract.user_house_link
+    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+      @user_house_contract.activate! 
+      render 'show', :status => :ok
+    else
+      @errMsg = "User is neither admin nor house owner."
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+
+  def deactivate
+      destroy
+  end
+
   def destroy
     @user_house_contract = UserHouseContract.find(params[:id])
     @userhouselink = @user_house_contract.user_house_link

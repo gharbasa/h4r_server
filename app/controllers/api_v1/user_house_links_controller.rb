@@ -67,7 +67,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     elsif (params[:updateType] == "agency_coll_emp")
       permission = User::USER_ACL::AGENCY_COLLECTION_EMP
     end #end of main if
-      
+    
     #if(params[updateType] == true) #Is there a previous tenant already associated with a house
     org_user_id_param = "org_#{updateType}_id"
     org_user_id = params[org_user_id_param]

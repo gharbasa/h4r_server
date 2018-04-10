@@ -48,8 +48,8 @@ NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_UPDATED, cont
 
 #Time.now.to_s :db
 user = User.create!(login: 'abed', email: 'abedali@engineer.com',  
-  password: "general",
-  password_confirmation: "general",
+  password: "general1",
+  password_confirmation: "general1",
   fname: "Abed", 
   mname: "", 
   lname: "Ali", 
