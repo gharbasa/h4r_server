@@ -62,9 +62,9 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
       permission = User::USER_ACL::PROPERTY_MGMT_MGR
     elsif (params[:updateType] == "property_mgmt_emp")
       permission = User::USER_ACL::PROPERTY_MGMT_EMP
-    elsif (params[:updateType] == "agency_coll_mgr")
+    elsif (params[:updateType] == "agency_collection_mgr")
       permission = User::USER_ACL::AGENCY_COLLECTION_MGR
-    elsif (params[:updateType] == "agency_coll_emp")
+    elsif (params[:updateType] == "agency_collection_emp")
       permission = User::USER_ACL::AGENCY_COLLECTION_EMP
     end #end of main if
     
@@ -175,6 +175,24 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     end
   end
   
+  #List the house contract based on the houseid/userid/roleId combination
+  def contracts
+    #if isAuth(@userhouselink.house) # only house owner or admin can delete
+      id = params[:id]
+      print "contracts id=" + id.to_s
+      #houseId_userId_roleNumber
+      houseId,userId,role =  id.to_s.split("_")
+      print "houseId=" + houseId.to_s + ", userId=" + userId.to_s + ", role=" + role.to_s
+      if(houseId && userId && role)
+        @user_house_contracts = UserHouseContract.where(:house_id => houseId, :user_id => userId, :role => role)
+      else
+        @errMsg = "Invalid input format."
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity 
+      end
+      #
+    #end
+  end
   def load_user
     user_id = params[:user_id]
     if user_id

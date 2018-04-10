@@ -16,16 +16,8 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   def create
     
-    if params[:user_house_contract][:created_by].nil?
-       params[:user_house_contract][:created_by] = current_user.id
-    end 
+    params[:user_house_contract][:created_by] = current_user.id
     
-    if(params[:user_house_contract][:created_by] != current_user.id)
-      @errMsg = "Login user is different from created_by user attribute in request payload."
-      print @errMsg 
-      render 'error', :status => :unprocessable_entity
-      return
-    end
     @userhouselink = UserHouseLink.find(params[:user_house_contract][:user_house_link_id])
     if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
       user_house_contracts = findHouseContracts @userhouselink.house
