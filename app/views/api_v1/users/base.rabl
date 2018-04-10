@@ -14,16 +14,10 @@ attributes :id,
            :addr2,
            :addr3,
            :addr4,
-           :role
+           :role,
+           :sex
            
 attributes :admin? => :admin,
-           :guest? => :guest,
-           :tenant? => :tenant,
-           :land_lord? => :land_lord,
-           :accountant? => :accountant,
-           :property_mgmt_mgr? => :property_mgmt_mgr,
-           :property_mgmt_emp? => :property_mgmt_emp,
-           :agency_collection_emp? => :agency_collection_emp,
-           :agency_collection_mgr? => :agency_collection_mgr,
-           :otherRole? => :otherRole 
+           :guest? => :guest
+            
            

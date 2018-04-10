@@ -31,6 +31,8 @@ H4R::Application.routes.draw do
       end
       member do
         put :verified #this is only for admin access
+        put :promote2Admin  #this is only for admin access to promote user to admin role
+        put :demoteFromAdmin  #this is only for admin access to promote user to admin role
       end
       resources :notifications, :only => [:index] do
         member do
@@ -85,10 +87,19 @@ H4R::Application.routes.draw do
     resources :user_house_links, :only => [:index, :show, :create, :update, :destroy] do
       #destroy will delete the record, but not mark as inactive. After owner association is deleted
       #admin can only make someone as house owner.
+      member do #input is like "houseId_userId_roleNumber" fetch list of all active and inactive contracts
+        get :contracts
+        #get :notes, :only => [:notes]
+        #post :create_note, :only => [:create_note]
+      end
     end
     
     resources :user_house_contracts, :only => [:index, :show, :create, :update, :destroy] do
-      
+        member do
+           put :activate #this is only for admin access
+           put :deactivate #this is only for admin access
+        end
+        resources :house_contract_notes, :path => 'notes', :only => [:index, :show, :create, :update, :destroy]
     end
     
     resources :house_pics, :only => [:index, :show, :create, :update, :destroy] do

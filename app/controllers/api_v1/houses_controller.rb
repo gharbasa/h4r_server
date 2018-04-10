@@ -6,9 +6,9 @@ class ApiV1::HousesController < ApiV1::BaseController
   def index
     if(@user)
        #@UserHouseLinks = UserHouseLink.where(:user => @user)#House.where(:user_house_links.user => @user)
-       @houses = @user.houses
+       @houses = @user.houses.order(name: :asc)
     else
-      @houses = House.all
+      @houses = House.all.order(name: :asc)
     end
   end
   
@@ -39,7 +39,7 @@ class ApiV1::HousesController < ApiV1::BaseController
 
   def update
     @house = House.find(params[:id]) 
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can update
+    if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can update
       @house.updated_by = current_user.id
       if @house.update_attributes(params[:house])
         flash[:house] = "House updated!"
@@ -50,7 +50,7 @@ class ApiV1::HousesController < ApiV1::BaseController
         render 'error', :status => :unprocessable_entity
       end
     else
-      @errMsg = "User is neither admin nor house owner."
+      @errMsg = "User is neither admin nor house land_lord."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
@@ -64,7 +64,7 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.verified = true
       if @house.save
         flash[:house] = "House has been successfully verified!"
-        @owner = @house.owner
+        @owner = @house.land_lord
         if !@owner.nil?
           #send email to house owner  
           UserMailer.house_verified(@house, @owner).deliver_now #deliver_later  
@@ -85,7 +85,7 @@ class ApiV1::HousesController < ApiV1::BaseController
   #To mark that the house is inactivated, email send to owner?
   def inactivate
     @house = House.find(params[:id]) 
-    if current_user.owner?(@house) # only admin can mark house as verified
+    if current_user.land_lord?(@house) # only admin can mark house as verified
       @house.updated_by = current_user.id
       @house.active = false
       if @house.save
@@ -112,7 +112,7 @@ class ApiV1::HousesController < ApiV1::BaseController
   #To mark that the house is inactivated, email send to owner?
   def activate
     @house = House.find(params[:id]) 
-    if current_user.owner?(@house) # only admin can mark house as verified
+    if current_user.land_lord?(@house) # only admin can mark house as verified
       @house.updated_by = current_user.id
       @house.active = true
       if @house.save
@@ -138,7 +138,7 @@ class ApiV1::HousesController < ApiV1::BaseController
   
   def destroy
     @house = House.find(params[:id])
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can create
+    if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can create
       @house.deactivate! 
       render 'destroy', :status => :ok
     else

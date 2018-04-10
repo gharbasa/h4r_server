@@ -9,13 +9,6 @@ class UserHouseLink < ActiveRecord::Base
   has_many :user_house_contracts #, dependent: :destroy
   
   include ActiveFlag
-  
-  def tenant?
-    role == User::USER_ACL::TENANT 
-  end
-  
-  def owner?
-    role == User::USER_ACL::LAND_LORD
-  end
 
+  include AclCheckOnRole
 end

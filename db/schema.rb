@@ -162,17 +162,34 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.timestamps
   end
   
-  create_table  :user_house_contracts do |t|    #Contract between user and house
-    t.integer    :user_house_link_id,  :null => false
+  #The {user_id, house_id, role}  These combinations are generated from user_house_links while creating a contract
+  #This table don't refer to user_house_links table, reason user and house associations may change after signing the contract.
+  create_table    :user_house_contracts do |t|    #Contract between user and house
+    t.integer     :user_id,                 :null => false
+    t.integer     :house_id,                :null => false
+    t.integer     :role,                :null => false 
     t.datetime    :contract_start_date, :null => false
-    t.datetime    :contract_end_date, :null => false
-    t.float   :rent_amount,     :default => 0  #Rent amount during contract sign-up
+    t.datetime    :contract_end_date,   :null => false
+    t.float       :annual_rent_amount,     :default => 0  #Rent amount during contract sign-up
+    t.float       :monthly_rent_amount,     :default => 0  #Rent amount during contract sign-up
+    t.string      :note,                :null => true
     t.boolean :active,          :default => true #is house is in contract active?
     t.integer     :created_by
     t.integer     :updated_by
     t.timestamps
+    t.integer     :user_house_link_id,  :null => true #This can be null, it is only a reference to track back to the user/house association
   end
   
+  create_table :house_contract_notes do |t|    #
+    t.integer    :user_house_contractId,  :null => false
+    t.text       :note,                     :null => false
+    t.boolean    :active,                 :default => true
+    t.boolean    :private,                 :default => false #only administrator will see it
+    t.integer   :created_by
+    t.integer   :updated_by
+    t.timestamps
+  end
+
   create_table    :user_property_mgmt_links do |t|    #
     t.integer     :user_id,             :null => false
     t.integer     :property_mgmt_id,    :null => false   
