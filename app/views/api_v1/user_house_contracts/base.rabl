@@ -1,11 +1,11 @@
 attributes :id,
            :user_id, :house_id, :role,
-           :contract_start_date, 
-           :contract_end_date, 
            :annual_rent_amount, :monthly_rent_amount, :active, :created_by, :updated_by,
            :created_at, :updated_at, :note
 
-
+attributes :contractStartDate => :contract_start_date, 
+            :contractEndDate => :contract_end_date
+            
 child(:user => :user) do
 	attributes :fullName
 end

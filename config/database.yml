@@ -15,7 +15,7 @@ development:
   encoding: utf8
   database: h4r_dev
   username: root
-  password: tant-a01
+  password: manha123
   host: localhost
   port: 3307
 
@@ -28,7 +28,7 @@ test:
   encoding: utf8
   database: h4r_test
   username: root
-  password: tant-a01
+  password: manha123
   host: 127.0.0.1
   port: 3307
 
@@ -38,6 +38,6 @@ production:
   encoding: utf8
   database: h4r_prod
   username: root
-  password: tant-a01
+  password: manha123
   host: 127.0.0.1
   port: 3306

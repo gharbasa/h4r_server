@@ -19,5 +19,12 @@ class UserHouseContract < ActiveRecord::Base
     save
   end
 
+  def contractStartDate
+    contract_start_date.to_s(:custom_datetime)
+  end
+  
+  def contractEndDate
+    contract_end_date.to_s(:custom_datetime)
+  end
   
 end

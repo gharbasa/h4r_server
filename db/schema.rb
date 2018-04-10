@@ -159,7 +159,6 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.boolean     :active,                  :default => true #user house relation active?
     t.integer     :created_by
     t.integer     :updated_by
-    t.integer     :user_house_link_id,                 :null => true #This can be null, it is only a reference to track back to the user/house association
     t.timestamps
   end
   
@@ -178,6 +177,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer     :created_by
     t.integer     :updated_by
     t.timestamps
+    t.integer     :user_house_link_id,  :null => true #This can be null, it is only a reference to track back to the user/house association
   end
   
   create_table    :user_property_mgmt_links do |t|    #
