@@ -3,7 +3,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   skip_before_action :verify_authenticity_token
   before_filter :load_user, :only => [:index]
   before_filter :load_house, :only => [:index]
-  
+
   def index
       if (@user)
         @user_house_contracts = UserHouseContract.where(user: @user)
@@ -57,24 +57,28 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
 
   def update
     @user_house_contract = UserHouseContract.find(params[:id])
-    @userhouselink = @user_house_contract.user_house_link
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+    @house = House.find(@user_house_contract.house_id)
+    #@userhouselink = @user_house_contract.user_house_link
+    if isAuth(@house) # only house owner or admin can create contract entry
       @user_house_contract.updated_by = current_user.id
-      if !@user_house_contract.active?
-        if (!params[:user_house_contract][:active].nil? && 
-            ((params[:user_house_contract][:active] == true) || (params[:user_house_contract][:active] == 1))) 
+      #if !@user_house_contract.active?
+        #if (!params[:user_house_contract][:active].nil? && 
+        #    ((params[:user_house_contract][:active] == true) || (params[:user_house_contract][:active] == 1))) 
           #user is trying to make this contract active
-          user_house_contracts = findHouseContracts @userhouselink.house
-          if contractActive? user_house_contracts
-              @errMsg = "House has at least one contract active"
-              print @errMsg 
-              render 'error', :status => :unprocessable_entity
-              return
-          end
-        end
-      end
-      
-      if @user_house_contract.update_attributes(params[:user_house_contract])
+         # user_house_contracts = findHouseContracts @userhouselink.house
+          #if contractActive? user_house_contracts
+          #    @errMsg = "House has at least one contract active"
+          #    print @errMsg 
+          #    render 'error', :status => :unprocessable_entity
+          #    return
+          #end
+        #end
+      #end
+      contract_start_date = Date.strptime(params[:contract_start_date], "%m/%d/%Y")
+      contract_end_date = Date.strptime(params[:contract_end_date], "%m/%d/%Y")
+      if @user_house_contract.update_attributes(:contract_start_date => contract_start_date, :contract_end_date => contract_end_date,
+                                                        :annual_rent_amount => params[:annual_rent_amount], :monthly_rent_amount => params[:monthly_rent_amount],
+                                                        :note => params[:note], :active => params[:active])
         flash[:user_house_contract] = "User House Contract updated!"
         render 'show', :status => :ok
       else
@@ -115,6 +119,10 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
     end
   end
   
+  def isAuth (house)
+    current_user.admin? || current_user.house_created?(house) || current_user.land_lord?(house)# only house owner or admin can modify
+  end
+
   def findHouseContracts (house)
     houselinks = house.user_house_links
     houselink_ids = []

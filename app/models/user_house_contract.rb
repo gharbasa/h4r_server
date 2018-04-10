@@ -1,6 +1,6 @@
 class UserHouseContract < ActiveRecord::Base
   attr_accessible :user_id, :house_id, :contract_start_date, :user_house_link_id,
-                  :contract_end_date, :annual_rent_amount, :monthly_rent_amount, :role, :active, :created_by, :updated_by
+                  :contract_end_date, :annual_rent_amount, :monthly_rent_amount, :role, :active, :created_by, :updated_by, :note
                   
   belongs_to :user
   belongs_to :house
