@@ -5,7 +5,7 @@ class UserHouseContract < ActiveRecord::Base
   belongs_to :user
   belongs_to :house
   belongs_to :user_house_link #This is not needed in the view.
-
+  has_many :house_contract_notes 
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
   include AclCheckOnRole
