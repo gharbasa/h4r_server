@@ -1,6 +1,6 @@
 class ApiV1::UsersController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified, :promote2Admin, :demoteFromAdmin]
+  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified, :promote2Admin, :demoteFromAdmin, :houseContracts]
   skip_before_action :verify_authenticity_token
   
   def new
@@ -41,6 +41,11 @@ class ApiV1::UsersController < ApiV1::BaseController
     @user
   end
 
+  def houseContracts
+    @user = User.find(params[:id])
+    @user_house_contracts = @user.user_house_contracts
+  end
+  
   def edit
     @user = @current_user
   end

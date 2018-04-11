@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   has_many :houses, through: :user_house_links
   has_many :notifications
   has_many :communities, class_name: "Community", foreign_key: "manager_id"
+  has_many :user_house_contracts
   
   module USER_AVATAR_SETTINGS
     DEFAULT_AVATAR_URL = "/system/:attachment/default.png" #"/images/:style/missing.png"

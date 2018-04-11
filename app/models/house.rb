@@ -8,6 +8,7 @@ class House < ActiveRecord::Base
   has_many :user_house_links
   has_many :house_notes
   has_many :users, through: :user_house_links
+  has_many :user_house_contracts
   
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
