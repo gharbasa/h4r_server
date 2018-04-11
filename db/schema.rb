@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer     :updated_by
     t.timestamps
     t.integer     :user_house_link_id,  :null => true #This can be null, it is only a reference to track back to the user/house association
+    t.integer     :next_contract_id    :null => true #The contract renwed out of the present contract.
   end
   
   create_table :house_contract_notes do |t|    #

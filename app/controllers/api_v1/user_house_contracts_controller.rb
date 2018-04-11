@@ -16,31 +16,30 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   def create
     
-    params[:user_house_contract][:created_by] = current_user.id
-    
-    @userhouselink = UserHouseLink.find(params[:user_house_contract][:user_house_link_id])
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
-      user_house_contracts = findHouseContracts @userhouselink.house
-      if contractActive? user_house_contracts
-        @errMsg = "House has at least one contract active"
-        print @errMsg 
-        render 'error', :status => :unprocessable_entity
-        return
-      end
+      params[:user_house_contract][:created_by] = current_user.id
       
+      if(params[:renew] == true) 
+          print "This is a renew contract"
+          @previousContract = UserHouseContract.find(params[:from_contract_id])
+          if(@previousContract.nil?)
+              @errMsg = "Invalid Previous contract"
+              print @errMsg
+              render 'error', :status => :unprocessable_entity
+              return
+          end    
+      end
+
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
+      
       if @user_house_contract.save
+        @previousContract.next_contract_id = @user_house_contract.id
+        @previousContract.save
         render 'show', :status => :created
       else
         @errMsg = @user_house_contract.errors.full_messages
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
-    else
-        @errMsg = "User is neither admin nor house owner"
-        print @errMsg 
-        render 'error', :status => :unprocessable_entity  
-    end
   end
   
   def show
