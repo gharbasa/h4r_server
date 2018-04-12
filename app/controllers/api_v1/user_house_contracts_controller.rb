@@ -28,8 +28,6 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
               return
           end    
       end
-      #params[:contract_start_date] = Date.strptime(params[:contract_start_date], "%d-%m-%Y")
-      #params[:contract_end_date] = Date.strptime(params[:contract_end_date], "%d-%m-%Y")
       date_format = Rails.configuration.app_config[:date_format]
       start_date = DateTime.strptime(params[:contract_start_date], date_format).to_time
       end_date = DateTime.strptime(params[:contract_end_date], date_format).to_time
@@ -38,8 +36,10 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
       
       if @user_house_contract.save
-        @previousContract.next_contract_id = @user_house_contract.id
-        @previousContract.save
+        if(params[:renew] == true)
+          @previousContract.next_contract_id = @user_house_contract.id
+          @previousContract.save
+        end
         render 'show', :status => :created
       else
         @errMsg = @user_house_contract.errors.full_messages
