@@ -63,8 +63,7 @@ class User < ActiveRecord::Base
   #check if the user is a owner of this house (param)
   def land_lord? (house)
     user_house_links.each do |user_house_link|
-            return true if user_house_link.house.id == house.id &&
-                     user_house_link.user.id == id &&
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
                      user_house_link.land_lord?
     end
     return false
