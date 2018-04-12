@@ -46,6 +46,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
       @errMsg = "User is not authorized to perform update on the house user link."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
+      return
     end
     
     updateType = params[:updateType] #lets say update type is tenant
