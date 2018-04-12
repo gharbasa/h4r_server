@@ -34,6 +34,7 @@ H4R::Application.routes.draw do
         put :promote2Admin  #this is only for admin access to promote user to admin role
         put :demoteFromAdmin  #this is only for admin access to promote user to admin role
         get :houseContracts  #Get all the house contracts associated with this user
+        put :resetPassword
       end
       resources :notifications, :only => [:index] do
         member do

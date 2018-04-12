@@ -92,7 +92,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   def activate
     @user_house_contract = UserHouseContract.find(params[:id])
     @userhouselink = @user_house_contract.user_house_link
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+    if current_user.admin? || current_user.land_lord?(@userhouselink.house) # only house owner or admin can create contract entry
       @user_house_contract.activate! 
       render 'show', :status => :ok
     else
@@ -108,7 +108,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   def destroy
     @user_house_contract = UserHouseContract.find(params[:id])
     @userhouselink = @user_house_contract.user_house_link
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+    if current_user.admin? || current_user.land_lord?(@userhouselink.house) # only house owner or admin can create contract entry
       @user_house_contract.deactivate! 
       render 'destroy', :status => :ok
     else
