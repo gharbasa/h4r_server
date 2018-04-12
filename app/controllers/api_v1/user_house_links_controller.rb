@@ -43,7 +43,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   def update
     house = House.find(params[:house_id])
     if !isAuth(house)
-      @errMsg = "User is not authorized to perform update on the house user link."
+      @errMsg = "User is not authorized to update house user link."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
       return
