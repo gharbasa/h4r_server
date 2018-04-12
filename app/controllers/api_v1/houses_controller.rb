@@ -37,6 +37,11 @@ class ApiV1::HousesController < ApiV1::BaseController
     @house = House.find(params[:id])
   end
 
+  def contracts
+    @house = House.find(params[:id])
+    @user_house_contracts = @house.user_house_contracts
+  end
+  
   def update
     @house = House.find(params[:id]) 
     if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can update

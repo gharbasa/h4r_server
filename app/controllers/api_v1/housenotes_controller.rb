@@ -5,7 +5,7 @@ class ApiV1::HousenotesController < ApiV1::BaseController
   
   def index
     if(@house)
-       if(current_user.land_lord? @house)
+       if(current_user.admin? || (current_user.land_lord? @house))
          @notes = @house.house_notes.order(created_at: :desc) #House owner can view all the house notes
        else
          @notes = @house.public_and_own_house_notes current_user #Non-house owner can only view public and his created notes.

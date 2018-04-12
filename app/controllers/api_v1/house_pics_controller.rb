@@ -29,7 +29,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     @house_pic = HousePic.create(params[:house_pic])
     @house_pic.created_by = (current_user == nil)? nil:current_user.id
     
-    if current_user.admin? || current_user.owner?(@house) # only house owner or admin can upload pics
+    if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can upload pics
       
       if @house_pic.save
         #UserMailer.welcome_email(@user).deliver_now #deliver_later

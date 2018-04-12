@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   has_many :houses, through: :user_house_links
   has_many :notifications
   has_many :communities, class_name: "Community", foreign_key: "manager_id"
+  has_many :user_house_contracts
   
   module USER_AVATAR_SETTINGS
     DEFAULT_AVATAR_URL = "/system/:attachment/default.png" #"/images/:style/missing.png"
@@ -62,8 +63,7 @@ class User < ActiveRecord::Base
   #check if the user is a owner of this house (param)
   def land_lord? (house)
     user_house_links.each do |user_house_link|
-            return true if user_house_link.house.id == house.id &&
-                     user_house_link.user.id == id &&
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
                      user_house_link.land_lord?
     end
     return false

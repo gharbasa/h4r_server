@@ -16,31 +16,36 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   def create
     
-    params[:user_house_contract][:created_by] = current_user.id
-    
-    @userhouselink = UserHouseLink.find(params[:user_house_contract][:user_house_link_id])
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
-      user_house_contracts = findHouseContracts @userhouselink.house
-      if contractActive? user_house_contracts
-        @errMsg = "House has at least one contract active"
-        print @errMsg 
-        render 'error', :status => :unprocessable_entity
-        return
-      end
+      params[:user_house_contract][:created_by] = current_user.id
       
+      if(params[:renew] == true) 
+          print "This is a renew contract"
+          @previousContract = UserHouseContract.find(params[:from_contract_id])
+          if(@previousContract.nil?)
+              @errMsg = "Invalid Previous contract"
+              print @errMsg
+              render 'error', :status => :unprocessable_entity
+              return
+          end    
+      end
+      date_format = Rails.configuration.app_config[:date_format]
+      start_date = DateTime.strptime(params[:contract_start_date], date_format).to_time
+      end_date = DateTime.strptime(params[:contract_end_date], date_format).to_time
+      params[:contract_start_date] = start_date.to_s(:custom_datetime)
+      params[:contract_end_date] = end_date.to_s(:custom_datetime)
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
+      
       if @user_house_contract.save
+        if(params[:renew] == true)
+          @previousContract.next_contract_id = @user_house_contract.id
+          @previousContract.save
+        end
         render 'show', :status => :created
       else
         @errMsg = @user_house_contract.errors.full_messages
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
-    else
-        @errMsg = "User is neither admin nor house owner"
-        print @errMsg 
-        render 'error', :status => :unprocessable_entity  
-    end
   end
   
   def show
@@ -66,8 +71,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
           #end
         #end
       #end
-      contract_start_date = Date.strptime(params[:contract_start_date], "%m/%d/%Y")
-      contract_end_date = Date.strptime(params[:contract_end_date], "%m/%d/%Y")
+      date_format = Rails.configuration.app_config[:date_format]
+      contract_start_date = Date.strptime(params[:contract_start_date], date_format)
+      contract_end_date = Date.strptime(params[:contract_end_date], date_format)
       if @user_house_contract.update_attributes(:contract_start_date => contract_start_date, :contract_end_date => contract_end_date,
                                                         :annual_rent_amount => params[:annual_rent_amount], :monthly_rent_amount => params[:monthly_rent_amount],
                                                         :note => params[:note], :active => params[:active])
@@ -86,7 +92,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   def activate
     @user_house_contract = UserHouseContract.find(params[:id])
     @userhouselink = @user_house_contract.user_house_link
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+    if current_user.admin? || current_user.land_lord?(@userhouselink.house) # only house owner or admin can create contract entry
       @user_house_contract.activate! 
       render 'show', :status => :ok
     else
@@ -102,7 +108,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   def destroy
     @user_house_contract = UserHouseContract.find(params[:id])
     @userhouselink = @user_house_contract.user_house_link
-    if current_user.admin? || current_user.owner?(@userhouselink.house) # only house owner or admin can create contract entry
+    if current_user.admin? || current_user.land_lord?(@userhouselink.house) # only house owner or admin can create contract entry
       @user_house_contract.deactivate! 
       render 'destroy', :status => :ok
     else

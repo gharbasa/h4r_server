@@ -5,7 +5,8 @@ class HouseContractNote < ActiveRecord::Base
 
   alias_attribute :private_note, :private
   belongs_to :user_house_contract
-  
+  include DatetimeFormat
+    
   def deactivate!
     self.active = false
     save

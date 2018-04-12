@@ -1,6 +1,7 @@
 class ApiV1::UsersController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified, :promote2Admin, :demoteFromAdmin]
+  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified,
+                                         :promote2Admin, :demoteFromAdmin, :houseContracts, :resetPassword]
   skip_before_action :verify_authenticity_token
   
   def new
@@ -41,6 +42,11 @@ class ApiV1::UsersController < ApiV1::BaseController
     @user
   end
 
+  def houseContracts
+    @user = User.find(params[:id])
+    @user_house_contracts = @user.user_house_contracts
+  end
+  
   def edit
     @user = @current_user
   end
@@ -64,6 +70,28 @@ class ApiV1::UsersController < ApiV1::BaseController
       end
     else
       @errMsg = "Only login user or admin can modify user record."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+
+  #Only admin user or own login user can do this operation
+  def resetPassword
+    @user = User.find(params[:id])
+    if current_user_session.user.id == @user.id || current_user.admin?
+      if @user.update_attributes(:password => "kichidi123", :password_confirmation => "kichidi123", 
+                                              :updated_by => current_user.id)
+        flash[:notice] = "Password have been successfully updated!"
+        #redirect_to account_url
+        #TODO: Send him email notification
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "Only login user or admin can modify user account."
       print @errMsg
       render 'error', :status => :unprocessable_entity
     end
