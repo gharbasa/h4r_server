@@ -28,7 +28,13 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
               return
           end    
       end
-
+      #params[:contract_start_date] = Date.strptime(params[:contract_start_date], "%d-%m-%Y")
+      #params[:contract_end_date] = Date.strptime(params[:contract_end_date], "%d-%m-%Y")
+      date_format = Rails.configuration.app_config[:date_format]
+      start_date = DateTime.strptime(params[:contract_start_date], date_format).to_time
+      end_date = DateTime.strptime(params[:contract_end_date], date_format).to_time
+      params[:contract_start_date] = start_date.to_s(:custom_datetime)
+      params[:contract_end_date] = end_date.to_s(:custom_datetime)
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
       
       if @user_house_contract.save
@@ -65,8 +71,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
           #end
         #end
       #end
-      contract_start_date = Date.strptime(params[:contract_start_date], "%m/%d/%Y")
-      contract_end_date = Date.strptime(params[:contract_end_date], "%m/%d/%Y")
+      date_format = Rails.configuration.app_config[:date_format]
+      contract_start_date = Date.strptime(params[:contract_start_date], date_format)
+      contract_end_date = Date.strptime(params[:contract_end_date], date_format)
       if @user_house_contract.update_attributes(:contract_start_date => contract_start_date, :contract_end_date => contract_end_date,
                                                         :annual_rent_amount => params[:annual_rent_amount], :monthly_rent_amount => params[:monthly_rent_amount],
                                                         :note => params[:note], :active => params[:active])
