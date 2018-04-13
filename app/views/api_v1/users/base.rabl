@@ -15,7 +15,8 @@ attributes :id,
            :addr3,
            :addr4,
            :role,
-           :sex
+           :sex,
+           :fullName
            
 attributes :admin? => :admin,
            :guest? => :guest
