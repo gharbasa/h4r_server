@@ -190,7 +190,17 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer   :updated_by
     t.timestamps
   end
-
+  
+  create_table :user_house_contract_pics do |t|    #
+    t.integer    :user_house_contract_id,    :null => false
+    t.attachment :picture
+    t.string     :about_pic,               :null => false #About the pic
+    t.boolean    :primary_pic,  :default => false
+    t.integer   :created_by
+    t.integer   :updated_by
+    t.timestamps
+  end
+  
   create_table    :user_property_mgmt_links do |t|    #
     t.integer     :user_id,             :null => false
     t.integer     :property_mgmt_id,    :null => false   

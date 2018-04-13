@@ -13,10 +13,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   end
   
   def create
-    
-    if params[:house_pic][:created_by].nil?
-       params[:house_pic][:created_by] = current_user.id
-    end
+     params[:house_pic][:created_by] = current_user.id
     
     if((@house.created_by != current_user.id) && !(current_user.admin?))
       @errMsg = "Login user is different from house created user and not an admin user."
