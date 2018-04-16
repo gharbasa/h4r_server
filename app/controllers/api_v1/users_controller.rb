@@ -27,7 +27,7 @@ class ApiV1::UsersController < ApiV1::BaseController
       UserMailer.welcome_email(@user).deliver_now #deliver_later
       render 'show', :status => :created
     else
-      @errMsg = @user.errors.full_messages
+      @errMsg = @user.errors.full_messages[0]
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
@@ -64,7 +64,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         #TODO: Send him email notification
         render 'show', :status => :ok
       else
-        @errMsg = @user.errors.full_messages
+        @errMsg = @user.errors.full_messages[0]
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -86,7 +86,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         #TODO: Send him email notification
         render 'show', :status => :ok
       else
-        @errMsg = @user.errors.full_messages
+        @errMsg = @user.errors.full_messages[0]
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -107,7 +107,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         flash[:house] = "User is been successfully verified!"
         render 'show', :status => :ok
       else
-        @errMsg = @user.errors.full_messages
+        @errMsg = @user.errors.full_messages[0]
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -127,7 +127,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         flash[:user] = "User is been successfully promoted!"
         render 'show', :status => :ok
       else
-        @errMsg = @user.errors.full_messages
+        @errMsg = @user.errors.full_messages[0]
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -147,7 +147,7 @@ class ApiV1::UsersController < ApiV1::BaseController
         flash[:house] = "User is been successfully demoted!"
         render 'show', :status => :ok
       else
-        @errMsg = @user.errors.full_messages
+        @errMsg = @user.errors.full_messages[0]
         print @errMsg
         render 'error', :status => :unprocessable_entity
       end
@@ -166,7 +166,7 @@ class ApiV1::UsersController < ApiV1::BaseController
       #TODO: Send email to admin that the user is deactivated  
       render 'destroy', :status => :ok
     else      
-      @errMsg = @user.errors.full_messages
+      @errMsg = @user.errors.full_messages[0]
       print @errMsg
       render 'error', :status => :unprocessable_entity
     end
@@ -183,6 +183,32 @@ class ApiV1::UsersController < ApiV1::BaseController
                  []
                end
     
+  end
+  
+  def forgotPassword
+    print "forgotPassword"
+    users = User.arel_table
+    @users = User.where(:login => params[:login], :email => params[:email],
+                            :adhaar_no => params[:adhaar_no],
+                            :sex => params[:sex])
+    print "Number records size=" + @users.size.to_s 
+    if(@users.size == 1)
+      print "Ok, lets change the password"
+      @user = @users[0]
+      @user.update(:password => params[:password], :password_confirmation => params[:password_confirmation]) 
+      if @user.save
+        flash[:user] = "User is been successfully promoted!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages[0]
+        print @errMsg
+        render 'error', :status => :unprocessable_entity  
+      end  
+    else
+      @errMsg = "Your credentials did not match. Please try again or contact support."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end         
   end
   
   def processAvatar (method)
