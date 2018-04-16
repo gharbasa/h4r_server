@@ -28,6 +28,7 @@ H4R::Application.routes.draw do
       collection do
         #put :reorder
         get :search
+        put :forgotPassword
       end
       member do
         put :verified #this is only for admin access
