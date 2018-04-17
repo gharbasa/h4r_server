@@ -112,6 +112,11 @@ H4R::Application.routes.draw do
       #admin can only make someone as house owner.
     end
     
+    resources :payments, :only => [:index, :show, :create, :update, :destroy] do
+      #destroy will delete the record, but not mark as inactive. After owner association is deleted
+      #admin can only make someone as house owner.
+    end
+    
     resources :communities, :only => [:index, :show, :create, :update, :destroy] do
       collection do
         #put :reorder

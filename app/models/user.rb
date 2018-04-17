@@ -69,6 +69,15 @@ class User < ActiveRecord::Base
     return false
   end
   
+  #check if the user is a owner of this house (param)
+  def accountant? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.accountant?
+    end
+    return false
+  end
+  
   #check if the user is a manager of community(param)
   def manager? (community)
     community.manager_id == id
