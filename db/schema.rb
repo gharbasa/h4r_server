@@ -181,6 +181,19 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer     :next_contract_id,    :null => true #The contract renwed out of the present contract.
   end
   
+  create_table :payments do |t|   #Payment transactions
+    t.integer  :user_house_contract_id, :null => false
+    t.float    :payment,                :null => false
+    t.integer  :payment_status,         :null => false #pending, complete, failed
+    t.integer  :payment_type,           :default => 0 #initial payment for showing house? or rent payment
+    t.integer  :retries_count,          :default => 0 #retries on failed payments, max.retries will be in the application
+    t.string   :note,                   :null => true
+    t.timestamps :payment_date,         :null => false
+    t.integer    :created_by
+    t.integer    :updated_by
+    t.timestamps
+  end
+
   create_table :house_contract_notes do |t|    #
     t.integer    :user_house_contractId,  :null => false
     t.text       :note,                     :null => false
@@ -233,19 +246,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer    :updated_by
     t.timestamps
   end
-
-  create_table :payments do |t|   #Payment transactions
-    t.integer  :user_house_link_id,     :null => false
-    t.float    :payment,                :null => false
-    t.integer  :payment_status,         :null => false #pending, complete, failed
-    t.integer  :payment_type,           :default => 0 #initial payment for showing house? or rent payment
-    t.integer  :retries_count,          :default => 0 #retries on failed payments, max.retries will be in the application
-    
-    t.integer    :created_by
-    t.integer    :updated_by
-    t.timestamps
-  end
-  
+ 
   create_table :notifications do |t|   #Rent payment notification/notification to collection agency
     t.integer  :user_id,                    :null => false  #notification to user Id
     t.integer  :notification_type_id,       :default => 0 
