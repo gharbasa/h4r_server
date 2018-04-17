@@ -184,7 +184,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
   create_table :payments do |t|   #Payment transactions
     t.integer  :user_house_contract_id, :null => false
     t.float    :payment,                :null => false
-    t.integer  :payment_status,         :null => false #pending, complete, failed
+    t.integer  :payment_status,         :default => 0 #pending, complete, failed
     t.integer  :payment_type,           :default => 0 #initial payment for showing house? or rent payment
     t.integer  :retries_count,          :default => 0 #retries on failed payments, max.retries will be in the application
     t.string   :note,                   :null => true
