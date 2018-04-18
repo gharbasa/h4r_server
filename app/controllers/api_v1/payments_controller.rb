@@ -3,19 +3,19 @@ class ApiV1::PaymentsController < ApiV1::BaseController
   skip_before_action :verify_authenticity_token
   
   def index
-      @payments = Payment.all
+      @payments = Payment.all.order(payment_date: :desc)
   end
   
   def create
-    if params[:payment][:user_house_contract_id].nil?
+    if params[:user_house_contract_id].nil?
         @errMsg = "Contract id can not be null."
         print @errMsg 
         render 'error', :status => :unprocessable_entity
         return
     end
-    params[:payment][:created_by] = current_user.id
-    user_house_contract = UserHouseContract.find(params[:payment][:user_house_contract_id])
-     
+    params[:created_by] = current_user.id
+    user_house_contract = UserHouseContract.find(params[:user_house_contract_id])
+      
     if !isAuth user_house_contract
         @errMsg = "User is not authorized for receivables."
         print @errMsg 
@@ -23,7 +23,11 @@ class ApiV1::PaymentsController < ApiV1::BaseController
         return
     end
     
-    @payment = Payment.create(params[:payment])
+    date_format = Rails.configuration.app_config[:date_format]
+    start_date = DateTime.strptime(params[:payment_date], date_format).to_date
+    params[:payment_date] = start_date.to_s(:custom_datetime)
+    
+    @payment = Payment.create(params)
     
     if @payment.save
       render 'show', :status => :created
