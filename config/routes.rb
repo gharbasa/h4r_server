@@ -102,6 +102,7 @@ H4R::Application.routes.draw do
         member do
            put :activate #this is only for admin access
            put :deactivate #this is only for admin access
+           get :receivedPayments
         end
         resources :house_contract_notes, :path => 'notes', :only => [:index, :show, :create, :update, :destroy]
         resources :user_house_contract_pics, :path =>'pics', :only => [:index, :show, :create, :update, :destroy]

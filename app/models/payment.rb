@@ -1,12 +1,12 @@
 class Payment < ActiveRecord::Base #This is actually $$$ receivables.
   attr_accessible :user_house_contract_id, :payment, :payment_status, :payment_type,
-                  :retries_count, :created_by, :updated_by, :note, :payment_date
+                  :retries_count, :created_by, :updated_by, :note, :payment_date, :active
 
 
   belongs_to :user_house_contract
   
   include ActiveFlag
-  
+  include DatetimeFormat
 
   def deactivate!
     self.active = false
@@ -15,6 +15,10 @@ class Payment < ActiveRecord::Base #This is actually $$$ receivables.
   def activate!
     self.active = true
     save
+  end
+  
+  def paymentDate
+    payment_date.to_s(:custom_datetime)
   end
 
 end

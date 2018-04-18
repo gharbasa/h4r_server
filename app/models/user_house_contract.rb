@@ -9,6 +9,7 @@ class UserHouseContract < ActiveRecord::Base
   has_many :house_contract_notes
   has_many :user_house_contract_pics #, dependent: :destroy 
   belongs_to :user_house_contract, :foreign_key => 'next_contract_id' #next contract id
+  has_many :payments #, dependent: :destroy
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
   include AclCheckOnRole

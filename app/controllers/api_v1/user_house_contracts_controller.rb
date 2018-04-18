@@ -14,10 +14,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       end
   end
   
+  
   def create
-    
       params[:user_house_contract][:created_by] = current_user.id
-      
       if(params[:renew] == true) 
           print "This is a renew contract"
           @previousContract = UserHouseContract.find(params[:from_contract_id])
@@ -26,11 +25,11 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
               print @errMsg
               render 'error', :status => :unprocessable_entity
               return
-          end    
+          end
       end
       date_format = Rails.configuration.app_config[:date_format]
-      start_date = DateTime.strptime(params[:contract_start_date], date_format).to_time
-      end_date = DateTime.strptime(params[:contract_end_date], date_format).to_time
+      start_date = DateTime.strptime(params[:contract_start_date], date_format).to_date
+      end_date = DateTime.strptime(params[:contract_end_date], date_format).to_date
       params[:contract_start_date] = start_date.to_s(:custom_datetime)
       params[:contract_end_date] = end_date.to_s(:custom_datetime)
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
@@ -116,6 +115,13 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       render 'error', :status => :unprocessable_entity
     end
   end
+  
+  #received payments from this contract
+  def receivedPayments
+    user_house_contract = UserHouseContract.find(params[:id])
+    @payments = Payment.where(:user_house_contract => user_house_contract,  :active => true).order(payment_date: :desc)
+  end
+  
   
   def isAuth (house)
     current_user.admin? || current_user.house_created?(house) || current_user.land_lord?(house)# only house owner or admin can modify

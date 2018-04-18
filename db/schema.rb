@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer  :retries_count,          :default => 0 #retries on failed payments, max.retries will be in the application
     t.string   :note,                   :null => true
     t.timestamps :payment_date,         :null => false
+    t.boolean    :active,          :default => true #House active?
     t.integer    :created_by
     t.integer    :updated_by
     t.timestamps
