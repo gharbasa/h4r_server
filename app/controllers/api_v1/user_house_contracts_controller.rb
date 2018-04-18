@@ -119,7 +119,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   #received payments from this contract
   def receivedPayments
     user_house_contract = UserHouseContract.find(params[:id])
-    @payments = user_house_contract.payments.order(payment_date: :desc)
+    @payments = Payment.where(:user_house_contract => user_house_contract,  :active => true).order(payment_date: :desc)
   end
   
   

@@ -8,6 +8,6 @@ attributes :id,
            :updated_by, 
            :note,
            :paymentDate,
-           :createdAt, :updatedAt
+           :createdAt, :updatedAt, :active
 
 

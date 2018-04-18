@@ -75,12 +75,14 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     @payment = Payment.find(params[:id])
     user_house_contract = UserHouseContract.find(@payment.user_house_contract_id)
     if !isAuth user_house_contract
-        @errMsg = "User is not authorized for receivables."
+        @errMsg = "User is not authorized for updating receivables."
         print @errMsg 
         render 'error', :status => :unprocessable_entity
         return
     end
-    @payment.delete 
+    #@payment.delete
+    print "Ok making it inactivate."
+    @payment.deactivate!
     render 'destroy', :status => :ok
   end
   
