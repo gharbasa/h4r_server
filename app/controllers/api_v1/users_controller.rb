@@ -10,11 +10,7 @@ class ApiV1::UsersController < ApiV1::BaseController
   
   def index
     if(params[:commnunity_id].nil?) 
-      if current_user.admin?
-        @users = User.all
-      else
-        @users = current_user.community.users
-      end
+      @users = User.all
     else
       community = Community.find(params[:commnunity_id])
       @users = community.users
