@@ -24,3 +24,4 @@ child(:property_mgmt_emp => :property_mgmt_emp) { attributes :id, :fullName}
 child(:agency_collection_emp => :agency_collection_emp) { attributes :id, :fullName}
 child(:agency_collection_mgr => :agency_collection_mgr) { attributes :id, :fullName}
 child(:agency_collection_mgr => :agency_collection_mgr) { attributes :id, :fullName}
+child(:community => :community) { attributes :id, :name}

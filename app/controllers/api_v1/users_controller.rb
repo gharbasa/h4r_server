@@ -7,9 +7,18 @@ class ApiV1::UsersController < ApiV1::BaseController
   def new
     @user = User.new
   end
-    
+  
   def index
-    @users = User.all
+    if(params[:commnunity_id].nil?) 
+      if current_user.admin?
+        @users = User.all
+      else
+        @users = current_user.community.users
+      end
+    else
+      community = Community.find(params[:commnunity_id])
+      @users = community.users
+    end
   end
   
   def create

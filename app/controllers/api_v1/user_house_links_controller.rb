@@ -9,8 +9,13 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
         @userhouselinks = @user.user_house_links.includes(:house).order('houses.name ASC')
       elsif (@house)
         @userhouselinks = @house.user_house_links.includes(:house).order('houses.name ASC')
-      else
-        @userhouselinks = UserHouseLink.all.includes(:house).order('houses.name ASC')
+      else 
+        if(params[:community_id].nil?)
+          @userhouselinks = UserHouseLink.all.includes(:house).order('houses.name ASC')
+        else
+          community = Community.find(params[:community_id])
+          @userhouselinks = UserHouseLink.where(:house => community.houses).includes(:house).order('houses.name ASC')
+        end
       end
   end
   

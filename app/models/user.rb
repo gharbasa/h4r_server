@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
                     :role, :addr1, :addr2, :addr3, :addr4, :phone1, :phone2, :sex,
                     :adhaar_no, :verified, 
                     :active, :approved, :confirmed, :ndelete, :created_by, :updated_by, 
-                    :avatar
+                    :avatar, :community_id
 
   include ActiveFlag
   include AclCheckOnRole
@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :notifications
   has_many :communities, class_name: "Community", foreign_key: "manager_id"
   has_many :user_house_contracts
+  belongs_to :community
   
   module USER_AVATAR_SETTINGS
     DEFAULT_AVATAR_URL = "/system/:attachment/default.png" #"/images/:style/missing.png"
