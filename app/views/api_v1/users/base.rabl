@@ -16,9 +16,11 @@ attributes :id,
            :addr4,
            :role,
            :sex,
-           :fullName
+           :fullName,
+           :community_id
            
 attributes :admin? => :admin,
            :guest? => :guest
             
+child(:community => :community) { attributes :id, :name}
            

@@ -3,9 +3,9 @@ class Community < ActiveRecord::Base
                                 :verified, :active, :created_at, :updated_at,
                                 :created_by, :updated_by, :manager_id
                   
-  has_many :houses
+  has_many :houses #houes in the community
   has_many :community_pics
-  
+  has_many :users  #community users
   belongs_to :manager, class_name: "User"
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag

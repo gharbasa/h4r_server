@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer   :total_own_houses,          :default => 0 #Number houses user owns
     t.integer   :total_houses_tenant,     :default => 0 #Number houses user is a tenant
     t.datetime  :dob
+    t.integer    :community_id    #Can be null
     t.string    :avatar  #URL of the user's avatar
     t.boolean   :ndelete, :default => false#Is user de-activated?
     # Authlogic::Session::MagicStates 

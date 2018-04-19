@@ -4,12 +4,17 @@ class ApiV1::HousesController < ApiV1::BaseController
   before_filter :load_user, :only => [:index]
   
   def index
-    if(@user)
-       #@UserHouseLinks = UserHouseLink.where(:user => @user)#House.where(:user_house_links.user => @user)
-       @houses = @user.houses.order(name: :asc)
+    if(params[:community_id].nil?)
+      if(@user)
+         #@UserHouseLinks = UserHouseLink.where(:user => @user)#House.where(:user_house_links.user => @user)
+         @houses = @user.houses.order(name: :asc)
+      else
+        @houses = House.all.order(name: :asc)
+      end
     else
-      @houses = House.all.order(name: :asc)
-    end
+      community = Community.find(params[:community_id])
+      @houses = community.houses
+    end    
   end
   
   def create
