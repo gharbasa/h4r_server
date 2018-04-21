@@ -22,9 +22,9 @@ class ApiV1::NotificationsController < ApiV1::BaseController
      if(@user)
        @notifications = Notification.where(:user => @user, :active => true).order(created_at: :desc)
      elsif @notification_type 
-       @notifications = Notification.where(:notification_type => @notification_type, :active => true)
+       @notifications = Notification.where(:notification_type => @notification_type, :active => true).order(created_at: :desc)
      else
-       @notifications = Notification.all
+       @notifications = Notification.all.order(created_at: :desc)
      end
     #end
   end
@@ -77,11 +77,11 @@ class ApiV1::NotificationsController < ApiV1::BaseController
   
   def destroy
     @notification = Notification.find(params[:id])
-    if current_user.admin?
+    if @notification.user.id == current_user.id
       @notification.deactivate! 
       render 'destroy', :status => :ok
     else
-      @errMsg = @notification.errors.full_messages
+      @errMsg = "Invalid user-Unauthorized"
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
