@@ -6,7 +6,8 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   
   def index
       if (@user)
-        @userhouselinks = @user.user_house_links.includes(:house).order('houses.name ASC')
+        #retrieve links that this user associated with(user_id) or created/updated by him
+        @userhouselinks = UserHouseLink.where('user_house_links.user_id = ? OR user_house_links.created_by = ? OR user_house_links.updated_by = ?', @user.id,@user.id,@user.id).includes(:house).order('houses.name ASC')
       elsif (@house)
         @userhouselinks = @house.user_house_links.includes(:house).order('houses.name ASC')
       else 
@@ -20,17 +21,8 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   end
   
   def create
-    if params[:user_house_link][:created_by].nil?
-       params[:user_house_link][:created_by] = current_user.id
-    end 
+    params[:user_house_link][:created_by] = current_user.id
     
-    if(params[:user_house_link][:created_by] != current_user.id)
-      @errMsg = "Login user is different from created_by user attribute in request payload."
-      print @errMsg 
-      render 'error', :status => :unprocessable_entity
-      return
-    end
-
     @userhouselink = UserHouseLink.create(params[:user_house_link])
     if @userhouselink.save
       render 'show', :status => :created
@@ -100,7 +92,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
       print "\n Request is to make the user " +  @user.fullName + " #{updateType} of the house " + @house.name
       @userhouselink_new = UserHouseLink.where(:user => @user, :house => @house).take #There is only one user/house combination
       if !(@userhouselink_new.nil?) #house user link already exists
-        print "\n House and User link thats going to be promoted to #{updateType} is =" + @userhouselink_new.id.to_s
+        print "\n There is an existing house and user link, House and User link thats going to be promoted to #{updateType} is =" + @userhouselink_new.id.to_s
         if(@userhouselink_new.send("#{updateType}?".to_sym))
           print "\n User =" + @user.fullName + " is already a #{updateType} of the house " + @house.name + ", do nothing."  
         else
@@ -118,7 +110,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
             return      
           end  
         end
-      else 
+      else
         print "\n House " + @house.name + " and User " + @user.fullName + " link never exists before"
         @userhouselink_new = UserHouseLink.create(:user_id => params[newUserIdParam], :house_id => params[:house_id],
                                                   :role => aclNumber,
