@@ -7,7 +7,7 @@ attributes :id,
            :created_by, 
            :updated_by, 
            :note,
-           :paymentDate,
+           :paymentDate,:paymentMonth, :paymentYear,
            :createdAt, :updatedAt, :active
 
 

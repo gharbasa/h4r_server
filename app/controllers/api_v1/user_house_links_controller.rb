@@ -7,7 +7,8 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
   def index
       if (@user)
         #retrieve links that this user associated with(user_id) or created/updated by him
-        @userhouselinks = UserHouseLink.where('user_house_links.user_id = ? OR user_house_links.created_by = ? OR user_house_links.updated_by = ?', @user.id,@user.id,@user.id).includes(:house).order('houses.name ASC')
+        #also user should have at least one role with the house
+        @userhouselinks = UserHouseLink.where('user_house_links.role != 0 and (user_house_links.user_id = ? OR user_house_links.created_by = ? OR user_house_links.updated_by = ?)', @user.id,@user.id,@user.id).includes(:house).order('houses.name ASC')
       elsif (@house)
         @userhouselinks = @house.user_house_links.includes(:house).order('houses.name ASC')
       else 
