@@ -20,5 +20,12 @@ class Payment < ActiveRecord::Base #This is actually $$$ receivables.
   def paymentDate
     payment_date.to_s(:custom_datetime)
   end
-
+  
+  def paymentMonth
+    payment_date.strftime('%b') #%m
+  end
+  
+  def paymentYear
+    payment_date.year  
+  end
 end

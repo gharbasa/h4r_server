@@ -86,6 +86,68 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     render 'destroy', :status => :ok
   end
   
+  def monthlyPayments
+    #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
+    year = params[:year]
+    house_id = params[:house_id]
+    if(house_id.nil?)
+      @errMsg = "House id is required field."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
+    if(year.nil?)
+      year = Time.zone.now.year
+      print "year=" + year.to_s
+      month = Time.zone.now.month
+      year = year - 1 if(month == 1) #January, fall back to previous year 
+    end
+    date_format = Rails.configuration.app_config[:date_format]
+    start_date = DateTime.strptime("01-01-#{year}", date_format).to_date #"%d-%m-%Y"
+    end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
+    #
+    contracts = UserHouseContract.where(:house_id => house_id)
+    @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc)
+  end
+  
+  #past 5 years payment
+  def yearlyPayments
+    #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
+    house_id = params[:house_id]
+    if(house_id.nil?)
+      @errMsg = "House id is required field."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
+    year = Time.zone.now.year
+    print "year=" + year.to_s
+    month = Time.zone.now.month
+    year = year - 1 if(month == 1) #January, fall back to previous year 
+    startYear = year - 4 #2018 - 4 = 2014, 2015, 2016, 2017 and 2018
+    date_format = Rails.configuration.app_config[:date_format]
+    start_date = DateTime.strptime("01-01-#{startYear}", date_format).to_date #"%d-%m-%Y"
+    end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
+    summary = Hash.new
+    summary[startYear] = 0
+    summary[startYear + 1] = 0
+    summary[startYear + 2] = 0
+    summary[startYear + 3] = 0
+    summary[startYear + 4] = 0
+    
+    contracts = UserHouseContract.where(:house_id => house_id)
+    @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc).find_each do |payment|
+      summary[payment.paymentYear] += payment.payment  
+    end
+    
+    @yearlySummary = []
+    summary.each do |key, value|
+      @yearlySummary.push({"year" => key, "value" => value})
+    end
+  end
+  
   def isAuth user_house_contract
     house = user_house_contract.house
     return true if current_user.admin? ||
