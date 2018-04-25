@@ -80,10 +80,11 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer     :total_pics,          :default => 0
     t.float       :processing_fee,      :default => 0
     t.boolean     :verified,            :default => false #Verify house address
-    t.boolean    :active,          :default => true #House active?
-    t.integer    :community_id    #Can be null
-    t.integer    :created_by  #user_id
-    t.integer    :updated_by  #user_id
+    t.boolean     :active,              :default => true #House active?
+    t.boolean     :is_open,             :default => false #is open for rent
+    t.integer     :community_id    #Can be null
+    t.integer     :created_by  #user_id
+    t.integer     :updated_by  #user_id
     t.timestamps
   end
   

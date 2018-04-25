@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
     return false
   end
   
-  #check if the user is a owner of this house (param)
+  #check if the user is a accountant of this house (param)
   def accountant? (house)
     user_house_links.each do |user_house_link|
             return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
@@ -79,9 +79,50 @@ class User < ActiveRecord::Base
     return false
   end
   
+  #check if the user is a property_mgmt_mgr of this house (param)
+  def property_mgmt_mgr? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.property_mgmt_mgr?
+    end
+    return false
+  end
+  
+  #check if the user is a property_mgmt_emp of this house (param)
+  def property_mgmt_emp? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.property_mgmt_emp?
+    end
+    return false
+  end
+  
+  #check if the user is a property_mgmt_emp of this house (param)
+  def agency_collection_emp? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.agency_collection_emp?
+    end
+    return false
+  end
+  
+  #check if the user is a property_mgmt_emp of this house (param)
+  def agency_collection_mgr? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.agency_collection_mgr?
+    end
+    return false
+  end
+  
   #check if the user is a manager of community(param)
   def manager? (community)
     community.manager_id == id
+  end
+  
+  def tenantOnly? house
+       !accountant?(house) && !land_lord?(house) && !property_mgmt_mgr?(house) && !property_mgmt_emp?(house) &&
+       !agency_collection_mgr?(house) && !agency_collection_emp?(house)
   end
   
   #check if the user has created this community(param)

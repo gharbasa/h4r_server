@@ -1,6 +1,6 @@
 class House < ActiveRecord::Base
   attr_accessible :name, :addr1, :addr2, :addr3, :addr4, :no_of_portions, :no_of_floors, 
-                  :total_pics, :processing_fee, :verified,:active, 
+                  :total_pics, :processing_fee, :verified,:active, :is_open,
                   :created_by,:updated_by, :created_at, :updated_at, :community_id, :description
                   
   belongs_to :community
@@ -105,6 +105,14 @@ class House < ActiveRecord::Base
   def deactivate!
     self.active = false
     save
+  end
+  
+  def activeContractsExists?
+    user_house_contract_obj = nil
+    user_house_contracts.each do |user_house_contract|
+      user_house_contract_obj = user_house_contract if (user_house_contract.active == true)
+    end
+    user_house_contract_obj
   end
   
   #Non-house owner can only view public and his created notes.

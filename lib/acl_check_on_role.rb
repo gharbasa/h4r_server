@@ -16,7 +16,7 @@ module AclCheckOnRole
     AGENCY_COLLECTION_EMP    = 1 << 10 #1024 Collection agency emp
     AGENCY_COLLECTION_MGR    = 1 << 9 #512 Collection agency mgr
   end
-   
+  
   def admin?
     #print "Lets check if the user is admin=" + role.to_s + "," + (role & USER_ACL::ADMIN).to_s
     (role & USER_ACL::ADMIN) == USER_ACL::ADMIN
