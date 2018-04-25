@@ -73,11 +73,14 @@ H4R::Application.routes.draw do
       collection do
         #put :reorder
         get :search
+        get :list4Reports
       end
       member do
         put :verified
-        post :inactivate
-        post :activate
+        put :inactivate
+        put :activate
+        put :makeitOpen
+        put :makeitClosed
         #get :notes, :only => [:notes]
         #post :create_note, :only => [:create_note]
         get :contracts  #Get all the house contracts associated with this user
