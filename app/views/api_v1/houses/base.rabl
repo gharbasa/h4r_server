@@ -13,7 +13,10 @@ attributes :id,
            :created_by,
            :updated_by,
            :created_at, :updated_at,
-           :description, :is_open
+           :description, :is_open,
+           :no_of_bedrooms,
+           :no_of_bathrooms,
+           :floor_number
 
 child(:land_lord => :land_lord) { attributes :id, :fullName}
 child(:guest => :guest) { attributes :id, :fullName}           
