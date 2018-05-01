@@ -2,7 +2,7 @@ class House < ActiveRecord::Base
   attr_accessible :name, :addr1, :addr2, :addr3, :addr4, :no_of_portions, :no_of_floors, 
                   :total_pics, :processing_fee, :verified,:active, :is_open,
                   :created_by,:updated_by, :created_at, :updated_at, :community_id, :description,
-                  :no_of_bedrooms, :no_of_bathrooms, :floor_number
+                  :no_of_bedrooms, :no_of_bathrooms, :floor_number, :search
 
   belongs_to :community
   has_many :house_pics #, dependent: :destroy
@@ -13,12 +13,18 @@ class House < ActiveRecord::Base
   
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
-  
+  TOKEN = "|"
   module VERIFICATION
     NOT_VERIFIED = 0
     VERIFIED = 1
   end           
   
+  def prepareSearchString
+    communityName = ""
+    communityName = community.name if !community.nil?
+    name + TOKEN + addr1 + TOKEN + addr2 + TOKEN + addr3 + TOKEN + addr4 + TOKEN + description  + TOKEN + communityName
+  end
+
   def guest
     user_obj = nil
     user_house_links.each do |link|
