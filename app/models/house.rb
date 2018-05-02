@@ -13,7 +13,7 @@ class House < ActiveRecord::Base
   
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
-  TOKEN = "|"
+  TOKEN = " ^ "
   module VERIFICATION
     NOT_VERIFIED = 0
     VERIFIED = 1
@@ -22,7 +22,13 @@ class House < ActiveRecord::Base
   def prepareSearchString
     communityName = ""
     communityName = community.name if !community.nil?
-    name + TOKEN + addr1 + TOKEN + addr2 + TOKEN + addr3 + TOKEN + addr4 + TOKEN + description  + TOKEN + communityName
+    ((name.presence || "") + TOKEN + 
+          (addr1.presence || "") + TOKEN + 
+          (addr2.presence || "") + TOKEN + 
+          (addr3.presence || "") + TOKEN + 
+          (addr4.presence || "") + TOKEN + 
+          (description.presence || "")  + TOKEN + 
+          (communityName.presence || "")).upcase
   end
 
   def guest
