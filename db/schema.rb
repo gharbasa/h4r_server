@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer     :no_of_bedrooms,      :default => 1
     t.integer     :no_of_bathrooms,     :default => 1
     t.integer     :floor_number,        :default => 1
+    t.string      :search,              :null  => true
     t.integer     :created_by  #user_id
     t.integer     :updated_by  #user_id
     t.timestamps

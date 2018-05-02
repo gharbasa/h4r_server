@@ -40,6 +40,8 @@ class ApiV1::HousesController < ApiV1::BaseController
     @house = House.create(params[:house])
     @house.verified = false
     if @house.save
+      searchString = @house.prepareSearchString
+      @house.update_attributes(:search => searchString)
       render 'show', :status => :created
     else
       @errMsg = @house.errors.full_messages
@@ -62,6 +64,8 @@ class ApiV1::HousesController < ApiV1::BaseController
     if isAuth @house  # only house owner or admin can update
       @house.updated_by = current_user.id
       if @house.update_attributes(params[:house])
+        searchString = @house.prepareSearchString
+        @house.update_attributes(:search => searchString)
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
