@@ -237,17 +237,24 @@ class ApiV1::HousesController < ApiV1::BaseController
   
   def search
     print "user wants to search houses here."
-    houses = House.arel_table
-    @houses = if params[:address]
-                 House.where(houses[:addr1].matches("%#{params[:address]}%")
-                                          .or(houses[:addr2].matches("%#{params[:address]}%"))
-                                          .or(houses[:addr3].matches("%#{params[:address]}%"))
-                                          .or(houses[:addr4].matches("%#{params[:address]}%"))
-                                          .or(houses[:name].matches("%#{params[:address]}%"))
-                                          )
-              else 
-                 []
-               end
+    #houses = House.arel_table
+    
+    #@houses = if params[:address]
+    #             House.where(houses[:addr1].matches("%#{params[:address]}%")
+    #                                      .or(houses[:addr2].matches("%#{params[:address]}%"))
+    #                                      .or(houses[:addr3].matches("%#{params[:address]}%"))
+    #                                      .or(houses[:addr4].matches("%#{params[:address]}%"))
+    #                                      .or(houses[:name].matches("%#{params[:address]}%"))
+    #                                      )
+    #          else 
+    #             []
+    #           end
+    @houses = if params[:search] && !params[:search].empty? 
+              keyword = params[:search].upcase
+                House.where("active=1 and search like ?", '%' + keyword + '%')
+          else 
+            []
+          end
   end
   
   def load_user
