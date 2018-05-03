@@ -5,7 +5,11 @@ class ApiV1::HouseContractNotesController < ApiV1::BaseController
   
   def index
     if(@houseContract)
-       @notes = @houseContract.house_contract_notes.order(created_at: :desc) #House owner can view all the house notes
+        if(current_user.admin? || (current_user.land_lord? @house))
+          @notes = @houseContract.house_contract_notes.order(created_at: :desc) #House owner can view all the house notes
+        else
+          @notes = HouseContractNote.non_private_by_user_contract(current_user.id, @houseContract.id)
+        end
     else
       @errMsg = "House Contract Id not found."
       print @errMsg 

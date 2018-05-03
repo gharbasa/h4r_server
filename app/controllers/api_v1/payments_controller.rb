@@ -1,5 +1,6 @@
 class ApiV1::PaymentsController < ApiV1::BaseController
-  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy]
+  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, 
+                              :monthlyIncome, :yearlyIncome,:monthlyExpense,:yearlyExpense]
   skip_before_action :verify_authenticity_token
   
   def index
@@ -86,33 +87,26 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     render 'destroy', :status => :ok
   end
   
-  def monthlyPayments
-    #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
-    year = params[:year]
-    house_id = params[:house_id]
-    if(house_id.nil?)
-      @errMsg = "House id is required field."
-      print @errMsg 
-      render 'error', :status => :unprocessable_entity
-      return
-    end
-    
-    if(year.nil?)
-      year = Time.zone.now.year
-      print "year=" + year.to_s
-      month = Time.zone.now.month
-      year = year - 1 if(month == 1) #January, fall back to previous year 
-    end
-    date_format = Rails.configuration.app_config[:date_format]
-    start_date = DateTime.strptime("01-01-#{year}", date_format).to_date #"%d-%m-%Y"
-    end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
-    #
-    contracts = UserHouseContract.where(:house_id => house_id)
-    @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc)
+  def monthlyIncome
+    buildMonthlyDS(UserHouseContract::CONTRACTTYPE::INCOME)
   end
   
   #past 5 years payment
-  def yearlyPayments
+  def yearlyIncome
+    buildYearlyDS(UserHouseContract::CONTRACTTYPE::INCOME)
+  end
+  
+  def monthlyExpense
+    buildMonthlyDS(UserHouseContract::CONTRACTTYPE::EXPENSE)
+  end
+  
+  def yearlyExpense
+    buildYearlyDS(UserHouseContract::CONTRACTTYPE::EXPENSE)
+  end
+  
+  
+  
+  def buildYearlyDS(reportType)
     #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
     house_id = params[:house_id]
     if(house_id.nil?)
@@ -137,7 +131,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     summary[startYear + 3] = 0
     summary[startYear + 4] = 0
     
-    contracts = UserHouseContract.where(:house_id => house_id)
+    contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
     @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc).find_each do |payment|
       summary[payment.paymentYear] += payment.payment  
     end
@@ -148,6 +142,30 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     end
   end
   
+  def buildMonthlyDS(reportType)
+    #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
+    year = params[:year]
+    house_id = params[:house_id]
+    if(house_id.nil?)
+      @errMsg = "House id is required field."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+      return
+    end
+    
+    if(year.nil?)
+      year = Time.zone.now.year
+      print "year=" + year.to_s
+      month = Time.zone.now.month
+      year = year - 1 if(month == 1) #January, fall back to previous year 
+    end
+    date_format = Rails.configuration.app_config[:date_format]
+    start_date = DateTime.strptime("01-01-#{year}", date_format).to_date #"%d-%m-%Y"
+    end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
+    #
+    contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
+    @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc)
+  end
   def isAuth user_house_contract
     house = user_house_contract.house
     return true if current_user.admin? ||

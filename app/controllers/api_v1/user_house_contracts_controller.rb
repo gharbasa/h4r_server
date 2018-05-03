@@ -80,7 +80,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       contract_end_date = Date.strptime(params[:contract_end_date], date_format)
       if @user_house_contract.update_attributes(:contract_start_date => contract_start_date, :contract_end_date => contract_end_date,
                                                         :annual_rent_amount => params[:annual_rent_amount], :monthly_rent_amount => params[:monthly_rent_amount],
-                                                        :note => params[:note], :active => params[:active])
+                                                        :note => params[:note], :active => params[:active], :contract_type => params[:contract_type])
         flash[:user_house_contract] = "User House Contract updated!"
         render 'show', :status => :ok
       else

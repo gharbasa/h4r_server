@@ -121,8 +121,10 @@ H4R::Application.routes.draw do
       #admin can only make someone as house owner.
       collection do
         #put :reorder
-        get :monthlyPayments
-        get :yearlyPayments
+        get :monthlyIncome
+        get :yearlyIncome
+        get :monthlyExpense
+        get :yearlyExpense
       end
     end
     
