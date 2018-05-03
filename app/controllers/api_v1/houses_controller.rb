@@ -16,7 +16,7 @@ class ApiV1::HousesController < ApiV1::BaseController
     else
       community = Community.find(params[:community_id])
       @houses = community.houses
-    end    
+    end
   end
   
   def list4Reports
@@ -36,7 +36,6 @@ class ApiV1::HousesController < ApiV1::BaseController
       render 'error', :status => :unprocessable_entity
       return
     end
-    
     @house = House.create(params[:house])
     @house.verified = false
     if @house.save
@@ -63,9 +62,10 @@ class ApiV1::HousesController < ApiV1::BaseController
     @house = House.find(params[:id]) 
     if isAuth @house  # only house owner or admin can update
       @house.updated_by = current_user.id
+      params[:house][:search] = @house.prepareSearchString
       if @house.update_attributes(params[:house])
-        searchString = @house.prepareSearchString
-        @house.update_attributes(:search => searchString)
+        #searchString = @house.prepareSearchString
+        #@house.update_attributes(:search => searchString)
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
@@ -249,12 +249,12 @@ class ApiV1::HousesController < ApiV1::BaseController
     #          else 
     #             []
     #           end
-    @houses = if params[:search] && !params[:search].empty? 
-              keyword = params[:search].upcase
-                House.where("active=1 and search like ?", '%' + keyword + '%')
-          else 
-            []
-          end
+    
+    @houses = if params[:search] && !params[:search].empty?
+                House.search(params[:search])
+              else
+                []
+              end
   end
   
   def load_user

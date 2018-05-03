@@ -1,8 +1,8 @@
 class UserHouseContract < ActiveRecord::Base
   attr_accessible :user_id, :house_id, :contract_start_date, :user_house_link_id,
                   :contract_end_date, :annual_rent_amount, :monthly_rent_amount, :role, :active, :created_by, :updated_by, :note,
-                  :next_contract_id
-                  
+                  :next_contract_id, :contract_type
+
   belongs_to :user
   belongs_to :house
   belongs_to :user_house_link #This is not needed in the view.
@@ -13,6 +13,11 @@ class UserHouseContract < ActiveRecord::Base
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
   include AclCheckOnRole
+  
+  module CONTRACTTYPE
+    INCOME = 1
+    EXPENSE = 2
+  end
   
   def deactivate!
     self.active = false
@@ -45,7 +50,15 @@ class UserHouseContract < ActiveRecord::Base
       false
     end
   end 
-
+  
+  def isIncomeContract
+    contract_type == CONTRACTTYPE::INCOME
+  end
+  
+  def isExpenseContract
+    contract_type == CONTRACTTYPE::EXPENSE
+  end
+  
   def renewed?
     (!next_contract.nil? && next_contract.active)
   end

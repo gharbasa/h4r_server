@@ -11,6 +11,8 @@ class House < ActiveRecord::Base
   has_many :users, through: :user_house_links
   has_many :user_house_contracts
   
+  scope :search, lambda { |keyword| where("active=1 and search like ?", '%' + keyword.upcase + '%') }
+  
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
   TOKEN = " ^ "
@@ -126,16 +128,5 @@ class House < ActiveRecord::Base
       user_house_contract_obj = user_house_contract if (user_house_contract.active == true)
     end
     user_house_contract_obj
-  end
-  
-  #Non-house owner can only view public and his created notes.
-  def public_and_own_house_notes user
-    public_house_notes = []
-    house_notes.order(created_at: :desc).each do |house_note|
-      if !(house_note.private) || (user.id == house_note.created_by) 
-        public_house_notes.push(house_note)
-      end
-    end
-    public_house_notes
   end
 end
