@@ -11,4 +11,7 @@ class UserHouseLink < ActiveRecord::Base
   include ActiveFlag
 
   include AclCheckOnRole
+  
+  scope :notTenantOnlyHouseLinks, lambda { |user_id| where("user_id=? and role not in(?,?)", user_id, USER_ACL::TENANT, 0) }
+  
 end

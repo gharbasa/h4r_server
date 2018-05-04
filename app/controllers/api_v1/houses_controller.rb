@@ -23,7 +23,7 @@ class ApiV1::HousesController < ApiV1::BaseController
       if current_user.admin?
         index
       else
-        #TODO: do not show the houses that the current is only a tenant.   
+        @houses = House.joins(:user_house_links).merge(UserHouseLink.notTenantOnlyHouseLinks(current_user.id))   
       end
   end
   
