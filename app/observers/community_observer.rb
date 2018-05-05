@@ -9,7 +9,11 @@ class CommunityObserver < ActiveRecord::Observer
     puts "\n--------Updated community, lets notify manager/creator.\n"
     if(community.manager_id_changed?)
       #notify_change_in_userhouselink(user_house_link)
-      notify_change_in_community(community,community.manager_id)
+      if(!community.manager_id.nil?)
+        notify_change_in_community(community,community.manager_id)
+      else
+        notify_change_in_community(community,community.created_by)
+      end 
       if(community.manager_id_was.nil?)
         notify_change_in_community(community,community.created_by)
       else
