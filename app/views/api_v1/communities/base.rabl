@@ -10,4 +10,8 @@ attributes :id,
            :manager_id,
            :created_by,
            :updated_by,
-           :created_at, :updated_at
+           :created_at, :updated_at,
+           :unitsCount, :openUnits
+
+child(:manager => :manager) { attributes :fullName}
+child(:createdBy => :createdBy) { attributes :fullName}
