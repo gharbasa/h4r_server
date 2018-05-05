@@ -129,4 +129,8 @@ class House < ActiveRecord::Base
     end
     user_house_contract_obj
   end
+  
+  def no_of_pics
+    house_pics.count 
+  end
 end
