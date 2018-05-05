@@ -16,7 +16,8 @@ attributes :id,
            :description, :is_open,
            :no_of_bedrooms,
            :no_of_bathrooms,
-           :floor_number
+           :floor_number,
+           :no_of_pics
 
 child(:land_lord => :land_lord) { attributes :id, :fullName}
 child(:guest => :guest) { attributes :id, :fullName}           
