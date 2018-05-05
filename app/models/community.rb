@@ -7,6 +7,7 @@ class Community < ActiveRecord::Base
   has_many :community_pics
   has_many :users  #community users
   belongs_to :manager, class_name: "User"
+  belongs_to :createdBy, class_name: "User",foreign_key: "created_by"
   #TODO: Post create, user who creates the house will be by default the owner, later can be changed to different user.
   include ActiveFlag
   
@@ -32,5 +33,17 @@ class Community < ActiveRecord::Base
     self.active = false
     save
   end
-
+  
+  def unitsCount
+    houses.count
+  end
+  
+  def openUnits
+    count = 0
+    houses.each do |house|
+      count = count+1 if house.is_open == true
+    end
+    count
+  end
+  
 end

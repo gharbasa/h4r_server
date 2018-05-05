@@ -7,24 +7,10 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
   end
   
   def create
-    if params[:community][:manager_id].nil?
-       params[:community][:manager_id] = current_user.id
-    end 
-    if params[:community][:created_by].nil?
-       params[:community][:created_by] = current_user.id
-    end 
-    
-    if(params[:community][:created_by] != current_user.id)
-      @errMsg = "Login user is different from created_by user attribute in request payload."
-      print @errMsg 
-      render 'error', :status => :unprocessable_entity
-      return
-    end
+    params[:community][:created_by] = current_user.id
     
     @community = Community.create(params[:community])
     
-    #@house.created_by = current_user.id
-    @community.verified = false
     if @community.save
       render 'show', :status => :created
     else
@@ -40,7 +26,7 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
 
   def update
     @community = Community.find(params[:id]) 
-    if current_user.admin? || current_user.owner?(@community) # only house owner or admin can create
+    if isAuth @community
       @community.updated_by = current_user.id
       if @community.update_attributes(params[:community])
         flash[:community] = "Community updated!"
@@ -51,7 +37,7 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
         render 'error', :status => :unprocessable_entity
       end
     else
-      @errMsg = "User is neither admin nor house owner."
+      @errMsg = "User is neither admin nor community owner."
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end
@@ -85,7 +71,7 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
   
   def destroy
     @community = Community.find(params[:id])
-    if current_user.admin? || current_user.owner?(@community) # only house owner or admin can create
+    if isAuth @community
       @community.deactivate! 
       render 'destroy', :status => :ok
     else
@@ -108,6 +94,10 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
               else 
                  []
                end
+  end
+  
+  def isAuth community
+    current_user.admin? || community.created_by = current_user.id || community.manager_id == current_user.id
   end
 
 end
