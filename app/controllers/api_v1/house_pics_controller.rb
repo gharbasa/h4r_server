@@ -1,6 +1,6 @@
 class ApiV1::HousePicsController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :create]
+  before_filter :require_user, :only => [:show, :edit, :update, :destroy, :create]
   skip_before_action :verify_authenticity_token
   before_filter :load_house, :only => [:index, :create]
   
@@ -87,7 +87,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
   end
   
   def canUserUpdate? house_pic
-    current_user.admin? || current_user.owner?(house_pic.house)
+    current_user.admin? || current_user.land_lord?(house_pic.house)
   end
   
   def processPicture
