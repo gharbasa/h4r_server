@@ -91,6 +91,14 @@ H4R::Application.routes.draw do
       resources :housenotes, :path => 'notes', :only => [:index, :show, :create, :update, :destroy]
     end
     
+    resources :tickets, :only => [:index, :show, :create, :update, :destroy] do
+      member do
+        put :inactivate
+        put :activate
+      end
+      resources :ticket_notes, :path => 'notes', :only => [:index, :show, :create, :update, :destroy]
+    end
+    
     resources :user_house_links, :only => [:index, :show, :create, :update, :destroy] do
       #destroy will delete the record, but not mark as inactive. After owner association is deleted
       #admin can only make someone as house owner.

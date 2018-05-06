@@ -8,7 +8,7 @@ class ApiV1::HousenotesController < ApiV1::BaseController
        if(current_user.admin? || (current_user.land_lord? @house))
          @notes = @house.house_notes.order(created_at: :desc) #House owner can view all the house notes
        else
-         @notes = HouseNote.non_private_by_house_user(current_user.id, @house.id)  #Non-house owner can only view public and his created notes.
+         @notes = HouseNote.non_private_by_house_user(current_user.id, @house.id).order(created_at: :desc)  #Non-house owner can only view public and his created notes.
        end
     else
       @errMsg = "House not found."

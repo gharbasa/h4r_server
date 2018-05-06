@@ -1,0 +1,3 @@
+attributes :errors
+object @ticket
+

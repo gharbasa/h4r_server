@@ -44,6 +44,13 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
           @previousContract.next_contract_id = @user_house_contract.id
           @previousContract.save
         end
+        #if the contract is tenant, then mark the house closed
+        if(@user_house_contract.tenant?)
+          house = House.find(@user_house_contract.house_id)
+          house.is_open = false;
+          house.save
+        end
+        
         render 'show', :status => :created
       else
         @errMsg = @user_house_contract.errors.full_messages
