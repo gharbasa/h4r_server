@@ -170,7 +170,7 @@ class ApiV1::HousesController < ApiV1::BaseController
       return
     end
     
-    user_house_contract = @house.activeContractsExists?  
+    user_house_contract = @house.activeTenantContractsExists?  
     if(!user_house_contract.nil?)
       @errMsg = "There is an active contract with user '" + user_house_contract.user.fullName + "', can not make it open."
       print @errMsg 

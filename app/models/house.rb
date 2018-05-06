@@ -122,10 +122,10 @@ class House < ActiveRecord::Base
     save
   end
   
-  def activeContractsExists?
+  def activeTenantContractsExists?
     user_house_contract_obj = nil
     user_house_contracts.each do |user_house_contract|
-      user_house_contract_obj = user_house_contract if (user_house_contract.active == true)
+      user_house_contract_obj = user_house_contract if ((user_house_contract.active == true) && (user_house_contract.tenant?))
     end
     user_house_contract_obj
   end

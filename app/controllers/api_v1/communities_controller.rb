@@ -3,7 +3,7 @@ class ApiV1::CommunitiesController < ApiV1::BaseController
   skip_before_action :verify_authenticity_token
   
   def index
-      @communities = Community.all
+      @communities = Community.all.order(name: :asc) #ticket owner can view all the ticket notes
   end
   
   def create

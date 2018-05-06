@@ -276,4 +276,23 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.integer    :updated_by
     t.timestamps
   end
+  
+  create_table :tickets do |t|
+    t.string     :subject,         :default => "N/A"
+    t.string     :description,     :default => "N/A"
+    t.integer    :status,          :default => 1 #1-Created, 2-Open, 3-Wait Response, 4-Pending, 5-Done
+    t.boolean    :active,          :default => true
+    t.integer    :created_by  
+    t.integer    :updated_by  
+    t.timestamps
+  end
+  
+  create_table :ticket_notes do |t|    #
+    t.integer    :ticket_id,       :null => false
+    t.string     :note,            :default => "N/A"
+    t.boolean    :private_note,    :default => false
+    t.integer   :created_by
+    t.integer   :updated_by
+    t.timestamps
+  end
 end

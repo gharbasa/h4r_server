@@ -62,4 +62,8 @@ class UserHouseContract < ActiveRecord::Base
   def renewed?
     (!next_contract.nil? && next_contract.active)
   end
+  
+  def tenant?
+    role == USER_ACL::TENANT
+  end
 end
