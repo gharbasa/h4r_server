@@ -5,7 +5,9 @@ class TicketNote < ActiveRecord::Base
   belongs_to :ticket
   belongs_to :createdBy, class_name: "User",foreign_key: "created_by"
   belongs_to :updatedBy, class_name: "User",foreign_key: "updated_by"
-  scope :non_private_by_user, lambda { |user_id, ticket_id| where("(private != 1 or created_by=?) and ticket_id=?", user_id, ticket_id) }
+  scope :non_private_by_user, lambda { |user_id, ticket_id| where("(private_note != 1 or created_by=?) and ticket_id=?", user_id, ticket_id) }
+  
+  include DatetimeFormat
   
   def private?
     :private_note

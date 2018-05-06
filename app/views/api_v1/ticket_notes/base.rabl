@@ -6,3 +6,4 @@ attributes :id,
            :updated_by,
            :createdAt, :updatedAt
            
+child(:createdBy => :createdBy) { attributes :fullName}

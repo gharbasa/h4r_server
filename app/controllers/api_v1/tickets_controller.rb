@@ -5,9 +5,13 @@ class ApiV1::TicketsController < ApiV1::BaseController
   
   def index
     if current_user.admin?
-      @tickets = Ticket.all.order(created_at: :desc)
+      if(params[:status].nil? || params[:status] == "0")
+        @tickets = Ticket.all.order(created_at: :desc)
+      else
+        @tickets = Ticket.where(:status => params[:status]).order(created_at: :desc)
+      end
     else
-      @tickets = Ticket.where(:created_by => current_user.id)
+      @tickets = Ticket.where(:created_by => current_user.id).order(created_at: :desc)
     end
   end
   
@@ -40,6 +44,7 @@ class ApiV1::TicketsController < ApiV1::BaseController
     @ticket = Ticket.find(params[:id]) 
     if isAuth @ticket  # only ticket owner or admin can update
       @ticket.updated_by = current_user.id
+      params[:ticket][:status] = @ticket.status if params[:ticket][:status].nil?
       if @ticket.update_attributes(params[:ticket])
         flash[:ticket] = "Ticket updated!"
         render 'show', :status => :ok
