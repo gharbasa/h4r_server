@@ -1,7 +1,7 @@
 class ApiV1::UsersController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified,
-                                         :promote2Admin, :demoteFromAdmin, :houseContracts, :resetPassword]
+                                         :promote2Admin, :demoteFromAdmin, :houseContracts, :resetPassword, :changeSubscription]
   skip_before_action :verify_authenticity_token
   
   def new
@@ -21,6 +21,7 @@ class ApiV1::UsersController < ApiV1::BaseController
     params[:user][:created_by] = (current_user == nil)? nil:current_user.id
 
     processAvatar "new"
+    #TODO: If the user is created after August month, make the subscriptionType 2, so that the user can view next year report
     @user = User.create(params[:user])
     if @user.save
       #if !(current_user || false)
@@ -128,6 +129,7 @@ class ApiV1::UsersController < ApiV1::BaseController
     if @user && current_user.admin? # only admin can mark house as verified
       @user.updated_by = current_user.id
       @user.role = User::USER_ACL::ADMIN
+      @user.subscriptionType = Rails.configuration.app_config[:ADMIN_DEFAULT_SUBSCRIPTION]
       if @user.save
         flash[:user] = "User is been successfully promoted!"
         render 'show', :status => :ok
@@ -148,6 +150,7 @@ class ApiV1::UsersController < ApiV1::BaseController
     if @user && current_user.admin? # only admin can mark house as verified
       @user.updated_by = current_user.id
       @user.role = User::USER_ACL::GUEST
+      @user.subscriptionType = 1  #When demoted, subscription will fall back to 1
       if @user.save
         flash[:house] = "User is been successfully demoted!"
         render 'show', :status => :ok
@@ -158,6 +161,26 @@ class ApiV1::UsersController < ApiV1::BaseController
       end
     else
       @errMsg = "User is not admin or not a valid user input."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  def changeSubscription
+    @user = User.find(params[:id]) 
+    if @user && current_user.admin? # only admin can mark house as verified
+      @user.updated_by = current_user.id
+      @user.subscriptionType = params[:subscriptionType]
+      if @user.save
+        flash[:house] = "User subscription successfully updated!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages[0]
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "Failed to update subscription, User is not an admin or not a valid user input."
       print @errMsg
       render 'error', :status => :unprocessable_entity
     end

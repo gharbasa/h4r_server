@@ -11,7 +11,11 @@ class ApiV1::TicketsController < ApiV1::BaseController
         @tickets = Ticket.where(:status => params[:status]).order(created_at: :desc)
       end
     else
-      @tickets = Ticket.where(:created_by => current_user.id).order(created_at: :desc)
+      if(params[:status].nil? || params[:status] == "0")
+        @tickets = Ticket.where(:created_by => current_user.id).order(created_at: :desc)
+      else
+        @tickets = Ticket.where(:created_by => current_user.id, :status => params[:status]).order(created_at: :desc)
+      end
     end
   end
   

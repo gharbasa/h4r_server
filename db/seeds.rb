@@ -66,6 +66,7 @@ user = User.create!(login: 'abed', email: 'abedali@engineer.com',
   delete: 0, 
   created_by: nil, 
   updated_by: nil, 
+  subscription_type:5,  #Admin default subscription
   #created_at: fake_time,
   #updated_at: nil
 )

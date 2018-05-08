@@ -65,6 +65,8 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.boolean    :verified,            :default => false #Verify the user?, this flag is visible only for admin UI
     t.integer   :created_by  #user_id
     t.integer   :updated_by  #user_id
+    t.integer   :subscription_type, :default => 1 #1-1 year free, 3-3year, 5-5year
+    t.datetime  :subscription_good_until, :default => Time.now 
     t.timestamps
   end
   

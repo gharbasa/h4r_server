@@ -16,7 +16,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     end
     params[:created_by] = current_user.id
     user_house_contract = UserHouseContract.find(params[:user_house_contract_id])
-      
+    
     if !isAuth user_house_contract
         @errMsg = "User is not authorized for receivables."
         print @errMsg 
@@ -91,7 +91,6 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     buildMonthlyDS(UserHouseContract::CONTRACTTYPE::INCOME)
   end
   
-  #past 5 years payment
   def yearlyIncome
     buildYearlyDS(UserHouseContract::CONTRACTTYPE::INCOME)
   end
@@ -119,18 +118,17 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     year = Time.zone.now.year
     print "year=" + year.to_s
     month = Time.zone.now.month
-    year = year - 1 if(month == 1) #January, fall back to previous year 
-    startYear = year - 4 #2018 - 4 = 2014, 2015, 2016, 2017 and 2018
+    year = year - 1 if(month == 1) #January, fall back to previous year
+    subscriptionType = current_user.subscriptionType - 1 
+    startYear = year - subscriptionType #2018 - 4 = 2014, 2015, 2016, 2017 and 2018
     date_format = Rails.configuration.app_config[:date_format]
     start_date = DateTime.strptime("01-01-#{startYear}", date_format).to_date #"%d-%m-%Y"
     end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
     summary = Hash.new
-    summary[startYear] = 0
-    summary[startYear + 1] = 0
-    summary[startYear + 2] = 0
-    summary[startYear + 3] = 0
-    summary[startYear + 4] = 0
-    
+    (0..subscriptionType).each do |i|
+      summary[startYear + i] = 0
+    end
+
     contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
     @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc).find_each do |payment|
       summary[payment.paymentYear] += payment.payment  

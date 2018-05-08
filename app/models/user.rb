@@ -4,11 +4,12 @@ class User < ActiveRecord::Base
                     :role, :addr1, :addr2, :addr3, :addr4, :phone1, :phone2, :sex,
                     :adhaar_no, :verified, 
                     :active, :approved, :confirmed, :ndelete, :created_by, :updated_by, 
-                    :avatar, :community_id
+                    :avatar, :community_id, :subscription_type, :subscription_good_until
 
   include ActiveFlag
   include AclCheckOnRole
-
+  include DatetimeFormat
+  
   has_many :user_house_links
   has_many :houses, through: :user_house_links
   has_many :notifications
@@ -190,6 +191,26 @@ class User < ActiveRecord::Base
   
   def self.isDefaultAvatar (url)
     return url == USER_AVATAR_SETTINGS::PROCESSED_DEFAULT_AVATAR_URL
+  end
+  
+  def subscriptionType
+    type = 1
+    if admin?
+      type = subscription_type #get the standard subscription from db
+    else 
+        type = subscription_type if (!subscription_good_until.nil?) && ((subscription_good_until - Time.now).to_i > 0)
+    end
+    type
+  end
+  
+  def subscriptionType=(subscription_type_newvalue)
+      self.subscription_type = subscription_type_newvalue
+      self.subscription_good_until = Time.now + Rails.configuration.app_config[:ADMIN_DEFAULT_SUBSCRIPTION].months
+      #Update the time when this subscription is good for 
+  end
+  
+  def subscriptionEndDate
+    subscription_good_until.to_s(:custom_datetime) if !subscription_good_until.nil?
   end
   
   #def password
