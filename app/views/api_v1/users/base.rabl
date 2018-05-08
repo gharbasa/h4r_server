@@ -17,8 +17,11 @@ attributes :id,
            :role,
            :sex,
            :fullName,
-           :community_id
-           
+           :community_id,
+           :subscriptionType,
+           :subscriptionEndDate,
+           :createdAt
+            
 attributes :admin? => :admin,
            :guest? => :guest
             

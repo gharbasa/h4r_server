@@ -10,3 +10,10 @@ development:
       api_key: "key-670fe0e29a970cadf2a5f2c170f23992"
       domain: "sandbox4907475c71f140c59e9e171c38e00093.mailgun.org"
   date_format: "%d-%m-%Y"
+  ADMIN_DEFAULT_SUBSCRIPTION: 5
+  SUBSCRIPTION_GOOD_FOR: 6 #any promoted subscription is good for 6 months
+
+production:
+  date_format: "%d-%m-%Y"
+  ADMIN_DEFAULT_SUBSCRIPTION: 5
+  SUBSCRIPTION_GOOD_FOR: 3 #The new subscription is good for 6 months

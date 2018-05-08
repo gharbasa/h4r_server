@@ -19,7 +19,6 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       end
   end
   
-  
   def create
       params[:user_house_contract][:created_by] = current_user.id
       if(params[:renew] == true) 
@@ -130,8 +129,9 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
   
   #received payments from this contract
   def receivedPayments
+    months = current_user.subscriptionType * 12 #months
     user_house_contract = UserHouseContract.find(params[:id])
-    @payments = Payment.where(:user_house_contract => user_house_contract,  :active => true).order(payment_date: :desc)
+    @payments = Payment.where(:created_at => months.months.ago..Time.now, :user_house_contract => user_house_contract,  :active => true).order(payment_date: :desc)
   end
   
   
