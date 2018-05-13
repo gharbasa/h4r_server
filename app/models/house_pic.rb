@@ -15,6 +15,6 @@ has_attached_file :picture,
   #validates_with AttachmentSizeValidator, attributes: :avatar, less_than: 1.megabytes
   validates_attachment :picture, 
         content_type: { content_type: ["image/jpeg", "image/gif", "image/png"] }, 
-        size: { in: 0..1.megabytes }
+        size: { in: 0..10.megabytes }
 
 end
