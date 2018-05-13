@@ -25,7 +25,7 @@ NotificationType.create!(ntype: NotificationType::TYPES::NEW_USER, content: 'Wec
 NotificationType.create!(ntype: NotificationType::TYPES::HOUSE_VERIFIED, content: 'Congratulations and Thank you for giving us an opportunity to verify your house. We are excited to have you in MaaGhar family. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
-  subject: "MaaGhar Verified your house!"
+  subject: "MaaGhar verified your house!"
 )
 
 NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDATED, content: 'There is a change in the house record you are associated with %s. \nRegards MaaGhar Team',  
@@ -37,7 +37,7 @@ NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDAT
 NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_VERIFIED, content: 'Community has been verified and Thank you for giving us an opportunity to verify the community. We are excited to have you in MaaGhar family. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
-  subject: "MaaGhar Verified the community!"
+  subject: "MaaGhar verified the community!"
 )
 
 NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_UPDATED, content: 'There is a change in the Community. \nRegards MaaGhar Team',  
