@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.float       :processing_fee,      :default => 0
     t.boolean     :verified,            :default => false #Verify house address
     t.boolean     :active,              :default => true #House active?
-    t.boolean     :is_open,             :default => false #is open for rent
+    t.boolean     :is_open,             :default => true #is open for rent
     t.integer     :community_id    #Can be null
     t.integer     :no_of_bedrooms,      :default => 1
     t.integer     :no_of_bathrooms,     :default => 1
