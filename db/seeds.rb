@@ -16,31 +16,31 @@ def fake_time
   @fake_time += SEED_OPTS[:time_step]
 end
 
-NotificationType.create!(ntype: NotificationType::TYPES::NEW_USER, content: 'Dear %s, \nWecome to H4R, We are excited to have you in H4R family. \nRegards H4R Team',  
+NotificationType.create!(ntype: NotificationType::TYPES::NEW_USER, content: 'Wecome to MaaGhar, We are excited to have you in MaaGhar family. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
-  subject: "Welcome to H4R!"
+  subject: "Welcome to MaaGhar!"
 )
 
-NotificationType.create!(ntype: NotificationType::TYPES::HOUSE_VERIFIED, content: 'Dear %s, \nCongratulations and Thank you for giving us an opportunity to verify your house. We are excited to have you in H4R family. \nRegards H4R Team',  
+NotificationType.create!(ntype: NotificationType::TYPES::HOUSE_VERIFIED, content: 'Congratulations and Thank you for giving us an opportunity to verify your house. We are excited to have you in MaaGhar family. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
-  subject: "H4R Verified your house!"
+  subject: "MaaGhar Verified your house!"
 )
 
-NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDATED, content: 'Dear %s, \nThere is a change in the house record you are associated with %s. \nRegards H4R Team',  
+NotificationType.create!(ntype: NotificationType::TYPES::USER_HOUSE_RECORD_UPDATED, content: 'There is a change in the house record you are associated with %s. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
   subject: "Change in house record!"
 )
 
-NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_VERIFIED, content: 'Dear %s, \nCommunity has been verified and Thank you for giving us an opportunity to verify the community. We are excited to have you in H4R family. \nRegards H4R Team',  
+NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_VERIFIED, content: 'Community has been verified and Thank you for giving us an opportunity to verify the community. We are excited to have you in MaaGhar family. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
-  subject: "H4R Verified the community!"
+  subject: "MaaGhar Verified the community!"
 )
 
-NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_UPDATED, content: 'Dear %s, \nThere is a change in the Community. \nRegards H4R Team',  
+NotificationType.create!(ntype: NotificationType::TYPES::COMMUNITY_UPDATED, content: 'There is a change in the Community. \nRegards MaaGhar Team',  
   require_retries: false, 
   active: true,
   subject: "Change in community!"
