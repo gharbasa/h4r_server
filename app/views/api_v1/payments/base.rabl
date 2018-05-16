@@ -1,6 +1,6 @@
 attributes :id,
            :user_house_contract_id, 
-           :payment, 
+           :amount, 
            :payment_status, 
            :payment_type, 
            :retries_count, 
