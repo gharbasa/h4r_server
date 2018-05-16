@@ -205,7 +205,7 @@ ActiveRecord::Schema.define(version: 20150827030447) do
   end
 
   create_table :house_contract_notes do |t|    #
-    t.integer    :user_house_contractId,  :null => false
+    t.integer    :user_house_contract_id,  :null => false
     t.text       :note,                     :null => false
     t.boolean    :active,                 :default => true
     t.boolean    :private,                 :default => false #only administrator will see it
