@@ -1,5 +1,5 @@
 class Payment < ActiveRecord::Base #This is actually $$$ receivables.
-  attr_accessible :user_house_contract_id, :payment, :payment_status, :payment_type,
+  attr_accessible :user_house_contract_id, :amount, :payment_status, :payment_type,
                   :retries_count, :created_by, :updated_by, :note, :payment_date, :active
 
 
