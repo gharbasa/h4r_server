@@ -131,7 +131,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
 
     contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
     @payments = Payment.where(:active => true, :payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc).find_each do |payment|
-      summary[payment.paymentYear] += payment.payment  
+      summary[payment.paymentYear] += payment.amount  
     end
     
     @yearlySummary = []
