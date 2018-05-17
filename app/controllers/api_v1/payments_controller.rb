@@ -8,14 +8,14 @@ class ApiV1::PaymentsController < ApiV1::BaseController
   end
   
   def create
-    if params[:user_house_contract_id].nil?
+    if params[:payment][:user_house_contract_id].nil?
         @errMsg = "Contract id can not be null."
         print @errMsg 
         render 'error', :status => :unprocessable_entity
         return
     end
-    params[:created_by] = current_user.id
-    user_house_contract = UserHouseContract.find(params[:user_house_contract_id])
+    params[:payment][:created_by] = current_user.id
+    user_house_contract = UserHouseContract.find(params[:payment][:user_house_contract_id])
     
     if !isAuth user_house_contract
         @errMsg = "User is not authorized for receivables."
@@ -25,10 +25,10 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     end
     
     date_format = Rails.configuration.app_config[:date_format]
-    start_date = DateTime.strptime(params[:payment_date], date_format).to_date
-    params[:payment_date] = start_date.to_s(:custom_datetime)
+    start_date = DateTime.strptime(params[:payment][:payment_date], date_format).to_date
+    params[:payment][:payment_date] = start_date.to_s(:custom_datetime)
     
-    @payment = Payment.create(params)
+    @payment = Payment.create(params[:payment])
     
     if @payment.save
       render 'show', :status => :created
@@ -63,7 +63,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     
     @payment.updated_by = current_user.id
     if @payment.update_attributes(params[:payment])
-      flash[:community] = "Payment updated!"
+      flash[:payment] = "Payment updated!"
       render 'show', :status => :ok
     else
       @errMsg = @payment.errors.full_messages[0]
