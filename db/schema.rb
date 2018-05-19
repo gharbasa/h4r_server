@@ -11,7 +11,192 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827030447) do
+ActiveRecord::Schema.define(version: 20180519005503) do
+
+  create_table "agency_collections", force: :cascade do |t|
+    t.string   "name",            limit: 255,                null: false
+    t.string   "addr1",           limit: 255,                null: false
+    t.string   "addr2",           limit: 255,                null: false
+    t.string   "addr3",           limit: 255,                null: false
+    t.string   "addr4",           limit: 255,                null: false
+    t.string   "webpage",         limit: 255
+    t.boolean  "active",                      default: true
+    t.integer  "total_employees", limit: 4,   default: 0
+    t.integer  "created_by",      limit: 4
+    t.integer  "updated_by",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "audits", force: :cascade do |t|
+    t.integer  "auditable_id",    limit: 4
+    t.string   "auditable_type",  limit: 255
+    t.integer  "associated_id",   limit: 4
+    t.string   "associated_type", limit: 255
+    t.integer  "user_id",         limit: 4
+    t.string   "user_type",       limit: 255
+    t.string   "username",        limit: 255
+    t.string   "action",          limit: 255
+    t.text     "audited_changes", limit: 65535
+    t.integer  "version",         limit: 4,     default: 0
+    t.string   "comment",         limit: 255
+    t.string   "remote_address",  limit: 255
+    t.string   "request_uuid",    limit: 255
+    t.datetime "created_at"
+  end
+
+  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", using: :btree
+  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", using: :btree
+  add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
+  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
+  add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
+
+  create_table "communities", force: :cascade do |t|
+    t.string   "name",           limit: 255,                 null: false
+    t.string   "addr1",          limit: 255,                 null: false
+    t.string   "addr2",          limit: 255,                 null: false
+    t.string   "addr3",          limit: 255,                 null: false
+    t.string   "addr4",          limit: 255,                 null: false
+    t.integer  "total_pics",     limit: 4,   default: 0
+    t.float    "processing_fee", limit: 24,  default: 0.0
+    t.boolean  "verified",                   default: false
+    t.boolean  "active",                     default: true
+    t.integer  "manager_id",     limit: 4
+    t.integer  "created_by",     limit: 4
+    t.integer  "updated_by",     limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "community_pics", force: :cascade do |t|
+    t.integer  "community_id",         limit: 4,                   null: false
+    t.string   "picture_file_name",    limit: 255
+    t.string   "picture_content_type", limit: 255
+    t.integer  "picture_file_size",    limit: 4
+    t.datetime "picture_updated_at"
+    t.string   "about_pic",            limit: 255,                 null: false
+    t.boolean  "primary_pic",                      default: false
+    t.integer  "created_by",           limit: 4
+    t.integer  "updated_by",           limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "house_contract_notes", force: :cascade do |t|
+    t.integer  "user_house_contract_id", limit: 4
+    t.string   "note",                   limit: 1000
+    t.boolean  "active"
+    t.boolean  "private"
+    t.integer  "created_by",             limit: 4
+    t.integer  "updated_by",             limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "house_notes", force: :cascade do |t|
+    t.integer  "house_id",   limit: 4,                    null: false
+    t.string   "note",       limit: 1000
+    t.boolean  "active",                  default: true
+    t.integer  "created_by", limit: 4
+    t.integer  "updated_by", limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "private",                 default: false
+  end
+
+  create_table "house_pics", force: :cascade do |t|
+    t.integer  "house_id",             limit: 4,                   null: false
+    t.string   "picture_file_name",    limit: 255
+    t.string   "picture_content_type", limit: 255
+    t.integer  "picture_file_size",    limit: 4
+    t.datetime "picture_updated_at"
+    t.string   "about_pic",            limit: 255,                 null: false
+    t.boolean  "primary_pic",                      default: false
+    t.integer  "created_by",           limit: 4
+    t.integer  "updated_by",           limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "houses", force: :cascade do |t|
+    t.string   "name",            limit: 255,                  null: false
+    t.string   "addr1",           limit: 255,                  null: false
+    t.string   "addr2",           limit: 255,                  null: false
+    t.string   "addr3",           limit: 255,                  null: false
+    t.string   "addr4",           limit: 255,                  null: false
+    t.integer  "no_of_portions",  limit: 4,    default: 1
+    t.integer  "no_of_floors",    limit: 4,    default: 1
+    t.integer  "total_pics",      limit: 4,    default: 0
+    t.float    "processing_fee",  limit: 24,   default: 0.0
+    t.boolean  "verified",                     default: false
+    t.boolean  "active",                       default: true
+    t.integer  "community_id",    limit: 4
+    t.integer  "created_by",      limit: 4
+    t.integer  "updated_by",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "description",     limit: 1000
+    t.boolean  "is_open",                      default: true
+    t.integer  "no_of_bedrooms",  limit: 4,    default: 1
+    t.integer  "no_of_bathrooms", limit: 4,    default: 1
+    t.integer  "floor_number",    limit: 4,    default: 1
+    t.string   "search",          limit: 500
+  end
+  add_index "houses", ["search"], name: "search_index", using: :btree
+
+  create_table "notification_types", force: :cascade do |t|
+    t.integer  "ntype",           limit: 4,   default: 0
+    t.string   "content",         limit: 255
+    t.string   "subject",         limit: 255, default: "Notification from H4R"
+    t.boolean  "require_retries",             default: false
+    t.boolean  "active",                      default: true
+    t.integer  "created_by",      limit: 4
+    t.integer  "updated_by",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "user_id",              limit: 4,                null: false
+    t.integer  "notification_type_id", limit: 4, default: 0
+    t.integer  "retries_count",        limit: 4, default: 0
+    t.boolean  "active",                         default: true
+    t.integer  "priority",             limit: 4, default: 8
+    t.integer  "created_by",           limit: 4
+    t.integer  "updated_by",           limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer  "user_house_contract_id", limit: 4,                   null: false
+    t.float    "amount",                 limit: 24,                  null: false
+    t.integer  "payment_status",         limit: 4,    default: 0
+    t.integer  "payment_type",           limit: 4,    default: 0
+    t.integer  "retries_count",          limit: 4,    default: 0
+    t.integer  "created_by",             limit: 4
+    t.integer  "updated_by",             limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "note",                   limit: 1000
+    t.datetime "payment_date"
+    t.boolean  "active",                              default: true
+  end
+
+  create_table "property_mgmts", force: :cascade do |t|
+    t.string   "name",            limit: 255,                null: false
+    t.string   "addr1",           limit: 255,                null: false
+    t.string   "addr2",           limit: 255,                null: false
+    t.string   "addr3",           limit: 255,                null: false
+    t.string   "addr4",           limit: 255,                null: false
+    t.string   "webpage",         limit: 255
+    t.integer  "total_employees", limit: 4,   default: 0
+    t.boolean  "active",                      default: true
+    t.integer  "created_by",      limit: 4
+    t.integer  "updated_by",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "tests", force: :cascade do |t|
     t.string   "title",      limit: 255
@@ -19,282 +204,145 @@ ActiveRecord::Schema.define(version: 20150827030447) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end
-  
-  create_table :users do |t|
-    # Authlogic::ActsAsAuthentic::Email
-    t.string    :login,               :null => false                # optional, you can use email instead, or both
-    t.string    :email,               :null => false                # optional, you can use login instead, or both
-    t.string    :crypted_password,    :null => false                # optional, see below
-    t.string    :password_salt,       :null => false                # optional, but highly recommended
-    t.string    :persistence_token,   :null => false                # required
-    t.string    :single_access_token, :null => false                # optional, see Authlogic::Session::Params
-    t.string    :perishable_token,    :null => false                # optional, see Authlogic::Session::Perishability
 
-    # Magic columns, just like ActiveRecord's created_at and updated_at. These are automatically maintained by Authlogic if they are present.
-    t.integer   :login_count,         :null => false, :default => 0 # optional, see Authlogic::Session::MagicColumns
-    t.integer   :failed_login_count,  :null => false, :default => 0 # optional, see Authlogic::Session::MagicColumns
-    t.datetime  :last_request_at                                    # optional, see Authlogic::Session::MagicColumns
-    t.datetime  :current_login_at                                   # optional, see Authlogic::Session::MagicColumns
-    t.datetime  :last_login_at                                      # optional, see Authlogic::Session::MagicColumns
-    t.string    :current_login_ip                                   # optional, see Authlogic::Session::MagicColumns
-    t.string    :last_login_ip                                      # optional, see Authlogic::Session::MagicColumns
-
-    t.string    :fname,               :null => false
-    t.string    :mname,               :null => false
-    t.string    :lname,               :null => false
-    t.integer   :sex,              :default => 0 #1-male, 2-female, 0-none
-    t.integer   :role,                 :null => false, :default => User::USER_ACL::GUEST #default-guest Summation of all roles in the link tables, except admin.
-    t.string     :addr1,               :null => false   #street name/colony name
-    t.string     :addr2                                #house number
-    t.string     :addr3                                #town/city name
-    t.string     :addr4                                #state
-    t.string    :phone1,              :null => false #Primary phone number
-    t.string    :phone2                               # Secondary phone number
-    t.integer   :total_own_houses,          :default => 0 #Number houses user owns
-    t.integer   :total_houses_tenant,     :default => 0 #Number houses user is a tenant
-    t.datetime  :dob
-    t.integer    :community_id    #Can be null
-    t.string    :avatar  #URL of the user's avatar
-    t.boolean   :ndelete, :default => false#Is user de-activated?
-    # Authlogic::Session::MagicStates 
-    t.boolean   :active, default: false
-    t.boolean   :approved, default: false
-    t.boolean   :confirmed, default: false
-    t.string   :adhaar_no
-    t.attachment :avatar
-    t.boolean    :verified,            :default => false #Verify the user?, this flag is visible only for admin UI
-    t.integer   :created_by  #user_id
-    t.integer   :updated_by  #user_id
-    t.integer   :subscription_type, :default => 1 #1-1 year free, 3-3year, 5-5year
-    t.datetime  :subscription_good_until, :default => Time.now 
-    t.timestamps
-  end
-  
-  create_table :houses do |t|
-    t.string      :name,                :null => false
-    t.string      :addr1,               :null => false   #street name/colony name
-    t.string      :addr2,               :null => false   #house number
-    t.string      :addr3,               :null => false    #town/city name
-    t.string      :addr4,               :null => false    #state
-    t.string      :description,         :null => true     #state
-    t.integer     :no_of_portions,      :default => 1
-    t.integer     :no_of_floors,        :default => 1
-    t.integer     :total_pics,          :default => 0
-    t.float       :processing_fee,      :default => 0
-    t.boolean     :verified,            :default => false #Verify house address
-    t.boolean     :active,              :default => true #House active?
-    t.boolean     :is_open,             :default => true #is open for rent
-    t.integer     :community_id    #Can be null
-    t.integer     :no_of_bedrooms,      :default => 1
-    t.integer     :no_of_bathrooms,     :default => 1
-    t.integer     :floor_number,        :default => 1
-    t.string      :search,              :null  => true
-    t.integer     :created_by  #user_id
-    t.integer     :updated_by  #user_id
-    t.timestamps
-  end
-  
-  create_table :communities do |t|
-    t.string     :name,                :null => false
-    t.string     :addr1,               :null => false   #street name/colony name
-    t.string     :addr2,               :null => false   #house number
-    t.string     :addr3,               :null => false    #town/city name
-    t.string     :addr4,               :null => false    #state
-    t.integer    :total_pics,          :default => 0
-    t.float      :processing_fee,      :default => 0
-    t.boolean    :verified,            :default => false #Verify house address
-    t.boolean   :active,          :default => true #House active?
-    t.integer   :manager_id   #users table
-    t.integer   :created_by  #user_id
-    t.integer   :updated_by  #user_id
-    t.timestamps
-  end
-  
-  create_table :community_pics do |t|    #
-    t.integer             :community_id,               :null => false
-    t.attachment :picture
-    t.string              :about_pic,               :null => false #About the pic
-    t.boolean             :primary_pic,  :default => false
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
-  end
-  
-  create_table :house_pics do |t|    #
-    t.integer             :house_id,               :null => false
-    t.attachment :picture
-    t.string              :about_pic,               :null => false #About the pic
-    t.boolean             :primary_pic,  :default => false
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
-  end
-  
-  create_table :house_notes do |t|    #
-    t.integer             :house_id,               :null => false
-    t.text              :note,                     :null => false
-    t.boolean             :active,                 :default => true
-    t.boolean             :private,                 :default => false
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
-  end
-  
-  create_table :property_mgmts do |t|    #Property management companies
-    t.string     :name,                :null => false
-    t.string     :addr1,               :null => false   #street name/colony name
-    t.string     :addr2,               :null => false   #house number
-    t.string     :addr3,               :null => false    #town/city name
-    t.string     :addr4,               :null => false    #state
-    t.string     :webpage
-    t.integer    :total_employees,      :default => 0
-    t.boolean    :active,          :default => true  #House active?
-    t.integer    :created_by                       
-    t.integer    :updated_by                       
-    t.timestamps
-  end
-  
-  create_table  :user_house_links do |t|    #
-    t.integer     :user_id,                 :null => false
-    t.integer     :house_id,                :null => false
-    t.integer     :role,                    :null => false, :default => User::USER_ACL::GUEST
-    t.float       :processing_fee,          :default => 0   #can be user level or house level.
-    t.integer     :total_renewals,          :default => 0 # number of user_house_contracts
-    t.integer     :total_pending_payments,          :default => 0 #
-    t.integer     :total_fail_payments,          :default => 0 #
-    t.integer     :total_success_payments,          :default => 0 #
-    t.integer     :user_house_contract_id , :default => 0 #There could be renewals, current active one.
-    t.boolean     :active,                  :default => true #user house relation active?
-    t.integer     :created_by
-    t.integer     :updated_by
-    t.timestamps
-  end
-  
-  #The {user_id, house_id, role}  These combinations are generated from user_house_links while creating a contract
-  #This table don't refer to user_house_links table, reason user and house associations may change after signing the contract.
-  create_table    :user_house_contracts do |t|    #Contract between user and house
-    t.integer     :user_id,                 :null => false
-    t.integer     :house_id,                :null => false
-    t.integer     :role,                :null => false 
-    t.datetime    :contract_start_date, :null => false
-    t.datetime    :contract_end_date,   :null => false
-    t.float       :annual_rent_amount,     :default => 0  #Rent amount during contract sign-up
-    t.float       :monthly_rent_amount,     :default => 0  #Rent amount during contract sign-up
-    t.string      :note,                :null => true
-    t.boolean :active,          :default => true #is house is in contract active?
-    t.integer     :created_by
-    t.integer     :updated_by
-    t.timestamps
-    t.integer     :user_house_link_id,  :null => true #This can be null, it is only a reference to track back to the user/house association
-    t.integer     :next_contract_id,    :null => true #The contract renwed out of the present contract.
-    t.integer     :contract_type,        :default => 1 #1-Income,2-Expense
-  end
-  
-  create_table :payments do |t|   #Payment transactions
-    t.integer  :user_house_contract_id, :null => false
-    t.float    :amount,                :null => false
-    t.integer  :payment_status,         :default => 0 #pending, complete, failed
-    t.integer  :payment_type,           :default => 0 #initial payment for showing house? or rent payment
-    t.integer  :retries_count,          :default => 0 #retries on failed payments, max.retries will be in the application
-    t.string   :note,                   :null => true
-    t.datetime :payment_date,         :null => false
-    t.boolean    :active,          :default => true #House active?
-    t.integer    :created_by
-    t.integer    :updated_by
-    t.timestamps
+  create_table "ticket_notes", force: :cascade do |t|
+    t.integer  "ticket_id",    limit: 4
+    t.string   "note",         limit: 1000
+    t.integer  "created_by",   limit: 4
+    t.integer  "updated_by",   limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "private_note",              default: false
   end
 
-  create_table :house_contract_notes do |t|    #
-    t.integer    :user_house_contract_id,  :null => false
-    t.text       :note,                     :null => false
-    t.boolean    :active,                 :default => true
-    t.boolean    :private,                 :default => false #only administrator will see it
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
+  create_table "tickets", force: :cascade do |t|
+    t.string   "subject",     limit: 500,  default: "N/A"
+    t.string   "description", limit: 1000, default: "N/A"
+    t.integer  "status",      limit: 4,    default: 1
+    t.boolean  "active",                   default: true
+    t.integer  "created_by",  limit: 4
+    t.integer  "updated_by",  limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
-  
-  create_table :user_house_contract_pics do |t|    #
-    t.integer    :user_house_contract_id,    :null => false
-    t.attachment :picture
-    t.string     :about_pic,               :null => false #About the pic
-    t.boolean    :primary_pic,  :default => false
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
+
+  create_table "user_agency_collection_links", force: :cascade do |t|
+    t.integer  "user_id",              limit: 4, null: false
+    t.integer  "agency_collection_id", limit: 4, null: false
+    t.integer  "role",                 limit: 4, null: false
+    t.integer  "created_by",           limit: 4
+    t.integer  "updated_by",           limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
-  
-  create_table    :user_property_mgmt_links do |t|    #
-    t.integer     :user_id,             :null => false
-    t.integer     :property_mgmt_id,    :null => false   
-    t.integer     :role,               :null => false #property manager? or employee? 
-    t.integer     :created_by
-    t.integer     :updated_by
-    t.timestamps
+
+  create_table "user_house_contract_pics", force: :cascade do |t|
+    t.integer  "user_house_contract_id", limit: 4,   null: false
+    t.string   "picture_file_name",      limit: 255
+    t.string   "picture_content_type",   limit: 255
+    t.integer  "picture_file_size",      limit: 4
+    t.datetime "picture_updated_at"
+    t.string   "about_pic",              limit: 255
+    t.boolean  "primary_pic"
+    t.integer  "created_by",             limit: 4
+    t.integer  "updated_by",             limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
-  
-  create_table :agency_collections do |t|    #Collection Agency respnsible for collecting money
-    t.string     :name,                :null => false
-    t.string     :addr1,               :null => false   #street name/colony name
-    t.string     :addr2,               :null => false   #house number
-    t.string     :addr3,               :null => false    #town/city name
-    t.string     :addr4,               :null => false    #state
-    t.string     :webpage
-    t.boolean    :active,          :default => true  #House active?
-    t.integer    :total_employees,     :default => 0
-    t.integer    :created_by
-    t.integer    :updated_by
-    t.timestamps
+
+  create_table "user_house_contracts", force: :cascade do |t|
+    t.integer  "user_house_link_id",  limit: 4
+    t.datetime "contract_start_date",                             null: false
+    t.datetime "contract_end_date",                               null: false
+    t.float    "annual_rent_amount",  limit: 24,   default: 0.0
+    t.boolean  "active",                           default: true
+    t.integer  "created_by",          limit: 4
+    t.integer  "updated_by",          limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",             limit: 4,                   null: false
+    t.integer  "house_id",            limit: 4,                   null: false
+    t.integer  "role",                limit: 4,    default: 0
+    t.float    "monthly_rent_amount", limit: 24,   default: 0.0
+    t.string   "note",                limit: 1000
+    t.integer  "next_contract_id",    limit: 4
+    t.integer  "contract_type",       limit: 1,    default: 1
   end
-  
-  create_table :user_agency_collection_links do |t|    #Employee in Collection Agency
-    t.integer     :user_id,                :null => false
-    t.integer     :agency_collection_id,   :null => false
-    t.integer     :role,                   :null => false
-    
-    t.integer    :created_by
-    t.integer    :updated_by
-    t.timestamps
+
+  create_table "user_house_links", force: :cascade do |t|
+    t.integer  "user_id",                limit: 4,                 null: false
+    t.integer  "house_id",               limit: 4,                 null: false
+    t.integer  "role",                   limit: 4,  default: 0,    null: false
+    t.float    "processing_fee",         limit: 24, default: 0.0
+    t.integer  "total_renewals",         limit: 4,  default: 0
+    t.integer  "total_pending_payments", limit: 4,  default: 0
+    t.integer  "total_fail_payments",    limit: 4,  default: 0
+    t.integer  "total_success_payments", limit: 4,  default: 0
+    t.integer  "user_house_contract_id", limit: 4,  default: 0
+    t.boolean  "active",                            default: true
+    t.integer  "created_by",             limit: 4
+    t.integer  "updated_by",             limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
- 
-  create_table :notifications do |t|   #Rent payment notification/notification to collection agency
-    t.integer  :user_id,                    :null => false  #notification to user Id
-    t.integer  :notification_type_id,       :default => 0 
-    t.integer  :retries_count,              :default => 0 #retries on failed payments, max.retries will be in the application
-    t.boolean  :active,          :default => true  #Notification active?
-    t.integer  :priority,          :default => Notification::PRIORITY::NORMAL
-    t.integer  :created_by
-    t.integer  :updated_by
-    t.timestamps
+
+  create_table "user_property_mgmt_links", force: :cascade do |t|
+    t.integer  "user_id",          limit: 4, null: false
+    t.integer  "property_mgmt_id", limit: 4, null: false
+    t.integer  "role",             limit: 4, null: false
+    t.integer  "created_by",       limit: 4
+    t.integer  "updated_by",       limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
-  
-  create_table :notification_types do |t|   #
-    t.integer  :ntype,                    :default => 0 #type of notification rent reminder/general/collection agent notification
-    t.string  :content                   #content can have ${} notation to replace with appropriate variable data
-    t.string :subject,                   :default => "Notification from H4R"
-    t.boolean :require_retries,          :default => 0  #Does this type of notification require retries?
-    t.boolean    :active,          :default => true  #Notification type active?
-    t.integer    :created_by
-    t.integer    :updated_by
-    t.timestamps
+
+  create_table "users", force: :cascade do |t|
+    t.string   "login",                   limit: 255,                 null: false
+    t.string   "email",                   limit: 255,                 null: false
+    t.string   "crypted_password",        limit: 255,                 null: false
+    t.string   "password_salt",           limit: 255,                 null: false
+    t.string   "persistence_token",       limit: 255,                 null: false
+    t.string   "single_access_token",     limit: 255,                 null: false
+    t.string   "perishable_token",        limit: 255,                 null: false
+    t.integer  "login_count",             limit: 4,   default: 0,     null: false
+    t.integer  "failed_login_count",      limit: 4,   default: 0,     null: false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",        limit: 255
+    t.string   "last_login_ip",           limit: 255
+    t.string   "fname",                   limit: 255,                 null: false
+    t.string   "mname",                   limit: 255,                 null: false
+    t.string   "lname",                   limit: 255,                 null: false
+    t.integer  "sex",                     limit: 4,   default: 0
+    t.integer  "role",                    limit: 4,   default: 0,     null: false
+    t.string   "addr1",                   limit: 255,                 null: false
+    t.string   "addr2",                   limit: 255
+    t.string   "addr3",                   limit: 255
+    t.string   "addr4",                   limit: 255
+    t.string   "phone1",                  limit: 255,                 null: false
+    t.string   "phone2",                  limit: 255
+    t.integer  "total_own_houses",        limit: 4,   default: 0
+    t.integer  "total_houses_tenant",     limit: 4,   default: 0
+    t.datetime "dob"
+    t.string   "avatar",                  limit: 255
+    t.boolean  "ndelete",                             default: false
+    t.boolean  "active",                              default: false
+    t.boolean  "approved",                            default: false
+    t.boolean  "confirmed",                           default: false
+    t.string   "adhaar_no",               limit: 255
+    t.string   "avatar_file_name",        limit: 255
+    t.string   "avatar_content_type",     limit: 255
+    t.integer  "avatar_file_size",        limit: 4
+    t.datetime "avatar_updated_at"
+    t.boolean  "verified",                            default: false
+    t.integer  "created_by",              limit: 4
+    t.integer  "updated_by",              limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "community_id",            limit: 4
+    t.integer  "subscription_type",       limit: 4,   default: 1
+    t.datetime "subscription_good_until"
   end
-  
-  create_table :tickets do |t|
-    t.string     :subject,         :default => "N/A"
-    t.string     :description,     :default => "N/A"
-    t.integer    :status,          :default => 1 #1-Created, 2-Open, 3-Wait Response, 4-Pending, 5-Done
-    t.boolean    :active,          :default => true
-    t.integer    :created_by  
-    t.integer    :updated_by  
-    t.timestamps
-  end
-  
-  create_table :ticket_notes do |t|    #
-    t.integer    :ticket_id,       :null => false
-    t.string     :note,            :default => "N/A"
-    t.boolean    :private_note,    :default => false
-    t.integer   :created_by
-    t.integer   :updated_by
-    t.timestamps
-  end
+
 end

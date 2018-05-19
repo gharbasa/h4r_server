@@ -7,6 +7,7 @@ class UserHouseLink < ActiveRecord::Base
   belongs_to :user
   belongs_to :house
   has_many :user_house_contracts #, dependent: :destroy
+  audited
   
   include ActiveFlag
 
