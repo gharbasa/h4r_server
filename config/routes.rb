@@ -78,6 +78,7 @@ H4R::Application.routes.draw do
       end
       member do
         put :verified
+        put :notverified
         put :inactivate
         put :activate
         put :makeitOpen

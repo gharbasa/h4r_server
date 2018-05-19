@@ -13,7 +13,7 @@ attributes  :id,
             :updated_by
 
 child(:user => :user) { attributes :id, :fullName}
-child(:house => :house) { attributes :id, :name}
+child(:house => :house) { attributes :id, :name, :verified}
 
 attributes  :tenant? => :tenant,
             :land_lord? => :land_lord,

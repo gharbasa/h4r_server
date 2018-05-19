@@ -1,6 +1,6 @@
 class ApiV1::HousesController < ApiV1::BaseController
   before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, 
-                                  :verified,:notes, :create_note, :makeitOpen, :makeitClosed,
+                                  :verified, :notverified, :notes, :create_note, :makeitOpen, :makeitClosed,
                                   :activate, :inactivate, :list4Reports]
   skip_before_action :verify_authenticity_token
   before_filter :load_user, :only => [:index]
@@ -92,6 +92,32 @@ class ApiV1::HousesController < ApiV1::BaseController
         if !@owner.nil?
           #send email to house owner  
           UserMailer.house_verified(@house, @owner).deliver_now #deliver_later  
+        end
+        render 'show', :status => :ok
+      else
+        @errMsg = @house.errors.full_messages
+        print @errMsg 
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not admin."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  #To mark that the house is verified, email send to owner?
+  def notverified
+    @house = House.find(params[:id]) 
+    if current_user.admin? # only admin can mark house as verified
+      @house.updated_by = current_user.id
+      @house.verified = false
+      if @house.save
+        flash[:house] = "House has been successfully set to Not verified!"
+        @owner = @house.land_lord
+        if !@owner.nil?
+          #send email to house owner  
+          #UserMailer.house_verified(@house, @owner).deliver_now #deliver_later  
         end
         render 'show', :status => :ok
       else

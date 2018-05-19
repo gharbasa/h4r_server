@@ -52,6 +52,12 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     print "\n User wants to change #{updateType} of the house"
     
     if(updateType == "land_lord")
+      if house.verified && !current_user.admin?
+        @errMsg = "You are not authorized to update landlord of verified house."
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+        return
+      end
       permission = User::USER_ACL::LAND_LORD
     elsif (params[:updateType] == "tenant")
       permission = User::USER_ACL::TENANT
