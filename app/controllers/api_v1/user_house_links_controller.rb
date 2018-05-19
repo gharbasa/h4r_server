@@ -9,6 +9,12 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
         #retrieve links that this user associated with(user_id) or created/updated by him
         #also user should have at least one role with the house
         @userhouselinks = UserHouseLink.where('user_house_links.role != 0 and (user_house_links.user_id = ? OR user_house_links.created_by = ? OR user_house_links.updated_by = ?)', @user.id,@user.id,@user.id).includes(:house).order('houses.name ASC')
+        #just get the list of all the links of the houses does this user belongs
+        set = Set.new
+        @userhouselinks.all.each do |userhouselink|
+          set.add?(userhouselink.house.id)
+        end
+        @userhouselinks = UserHouseLink.where(:house_id => set.to_a)
       elsif (@house)
         @userhouselinks = @house.user_house_links.includes(:house).order('houses.name ASC')
       else 
@@ -52,6 +58,12 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     print "\n User wants to change #{updateType} of the house"
     
     if(updateType == "land_lord")
+      if house.verified && !current_user.admin?
+        @errMsg = "You are not authorized to update landlord of verified house."
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+        return
+      end
       permission = User::USER_ACL::LAND_LORD
     elsif (params[:updateType] == "tenant")
       permission = User::USER_ACL::TENANT
