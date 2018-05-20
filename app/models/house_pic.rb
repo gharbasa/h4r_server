@@ -6,6 +6,7 @@ class HousePic < ActiveRecord::Base
 
 module HOUSE_PIC_SETTINGS
     DEFAULT_PIC_URL = "/system/:attachment/default.png" #"/images/:style/missing.png"
+    PROHIBITED_CONTENT = {"Human" => 60, "People" => 60, "Person" => 60, "Baby"=> 50, "Child"=> 50, "Kid" => 50}
 end
 
 has_attached_file :picture, 

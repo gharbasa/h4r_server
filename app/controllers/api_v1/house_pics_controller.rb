@@ -21,8 +21,27 @@ class ApiV1::HousePicsController < ApiV1::BaseController
       render 'error', :status => :unprocessable_entity
       return
     end
-    
+    imageData = StringIO.new(Base64.decode64(params[:house_pic][:picture][:data]))    
     processPicture if !params[:house_pic][:picture].nil?
+
+    #Human-99, People-99, Person-99, Clothing-96, Sari-96, Racket-65, Chair-63, Furniture-63, Gown-57, Robe-57, Kindergarten-56, Costume-54, Baby-51, Child-51, Kid-51, Dress-50
+    
+    client = Aws::Rekognition::Client.new
+    resp = client.detect_labels(
+         image: { bytes: imageData}
+    )
+    
+    resp.labels.each do |label|
+      puts "#{label.name}-#{label.confidence.to_i}"
+      if HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name] && label.confidence.to_i > HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name]
+        @errMsg = "Hey there is prohibited content in the image(#{label.name}-#{label.confidence.to_i})."
+        puts @errMsg
+        render 'error', :status => :unprocessable_entity
+        return
+      end
+    end
+
+
     @house_pic = HousePic.create(params[:house_pic])
     @house_pic.created_by = (current_user == nil)? nil:current_user.id
     

@@ -58,8 +58,8 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     print "\n User wants to change #{updateType} of the house"
     
     if(updateType == "land_lord")
-      if house.verified && !current_user.admin?
-        @errMsg = "You are not authorized to update landlord of verified house."
+      if house.verified# && !current_user.admin?
+        @errMsg = "House is already verified, can not update landlord."
         print @errMsg
         render 'error', :status => :unprocessable_entity
         return

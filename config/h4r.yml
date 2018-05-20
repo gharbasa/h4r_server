@@ -12,6 +12,9 @@ development:
   date_format: "%d-%m-%Y"
   ADMIN_DEFAULT_SUBSCRIPTION: 5
   SUBSCRIPTION_GOOD_FOR: 6 #any promoted subscription is good for 6 months
+  AWS_KEY: <KEY>
+  AWS_SECRET: <KEY>
+  AWS_REGION: <KEY>
 
 production:
   date_format: "%d-%m-%Y"
