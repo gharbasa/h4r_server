@@ -42,7 +42,14 @@ module H4R #This is a namespace for routes.rb
       self.app_config = Rails.application.config_for(:h4r).deep_symbolize_keys
     end
     config.load_h4r_config
-    
+
+    #AWS Configuration
+    Aws.config.update({
+      credentials: Aws::Credentials.new(Rails.configuration.app_config[:AWS_KEY], Rails.configuration.app_config[:AWS_SECRET])
+    })
+    Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
+    Aws.config.update({log_level: :debug})
+
     #Register observers here
     #active_observers = Dir["app/observers/*"].map do |i|
     #                     File.basename(i, ".rb")
