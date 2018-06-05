@@ -43,13 +43,25 @@ module H4R #This is a namespace for routes.rb
     end
     config.load_h4r_config
 
+  
+  
+  
     #AWS Configuration
     Aws.config.update({
       credentials: Aws::Credentials.new(Rails.configuration.app_config[:AWS_KEY], Rails.configuration.app_config[:AWS_SECRET])
     })
     Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
     Aws.config.update({log_level: :debug})
-
+  
+  
+    
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins 'http://localhost:4200'
+        resource '*', headers: :any, methods: [:get, :post, :options, :put, :delete], credentials: true
+      end
+    end
+  
     #Register observers here
     #active_observers = Dir["app/observers/*"].map do |i|
     #                     File.basename(i, ".rb")
