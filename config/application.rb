@@ -53,7 +53,13 @@ module H4R #This is a namespace for routes.rb
     Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
     Aws.config.update({log_level: :debug})
   
-  
+    config.paperclip_defaults = {
+      :storage => :s3,
+      :preserve_files => true,
+      :s3_region => Rails.configuration.app_config[:AWS_REGION],
+      #:s3_host_name => 'REMOVE_THIS_LINE_IF_UNNECESSARY',
+      :bucket => 'maaghar'
+    }
     
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do

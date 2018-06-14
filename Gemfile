@@ -19,7 +19,8 @@ gem 'protected_attributes'
 gem 'faker'
 gem 'mail'
 #gem 'mailgun-ruby', '~>1.0.3', require: 'mailgun'
-gem 'paperclip', "~> 4.3"
+#gem 'paperclip', "~> 4.3"
+gem 'paperclip', "~> 5.1"
 gem 'rails-observers' #removed from rails 4.0 onwards
 #gem 'counter_culture', '~> 0.1.33'
 #UI related gems
@@ -47,7 +48,7 @@ gem 'sprockets', '2.12.3' #This is required for templates to work
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem "audited-activerecord", "~> 4.0"
-gem 'aws-sdk'
+gem 'aws-sdk', '~> 2.3'
 gem 'rack-cors'
  
 # Use ActiveModel has_secure_password
