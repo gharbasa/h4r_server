@@ -32,7 +32,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     )
     
     resp.labels.each do |label|
-      puts "#{label.name}-#{label.confidence.to_i}"
+      logger.info "aws rekognition #{label.name}-#{label.confidence.to_i}"
       if HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name] && label.confidence.to_i > HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name]
         @errMsg = "Hey there is prohibited content in the image(#{label.name}-#{label.confidence.to_i})."
         puts @errMsg
