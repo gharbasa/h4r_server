@@ -1,6 +1,6 @@
 class HousePic < ActiveRecord::Base
   attr_accessible :house_id, :picture, :about_pic, :primary_pic, 
-                  :created_by, :updated_by, :created_at, :updated_at
+                  :created_by, :updated_by, :created_at, :updated_at,:rekognition_labels, :rekognition_text
                   
   belongs_to :house
 

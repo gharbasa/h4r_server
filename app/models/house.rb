@@ -24,13 +24,19 @@ class House < ActiveRecord::Base
   def prepareSearchString
     communityName = ""
     communityName = community.name if !community.nil?
-    ((name.presence || "") + TOKEN + 
+    searchString = ((name.presence || "") + TOKEN + 
           (addr1.presence || "") + TOKEN + 
           (addr2.presence || "") + TOKEN + 
           (addr3.presence || "") + TOKEN + 
           (addr4.presence || "") + TOKEN + 
           (description.presence || "")  + TOKEN + 
-          (communityName.presence || "")).upcase
+          (communityName.presence || ""))
+          
+    house_pics.each do |house_pic|
+      searchString = searchString + TOKEN + (house_pic.rekognition_labels.presence || "")  if !house_pic.rekognition_labels.nil?
+      searchString = searchString + TOKEN + (house_pic.rekognition_text.presence || "")  if !house_pic.rekognition_text.nil?
+    end
+    searchString.truncate(2000).upcase
   end
 
   def guest

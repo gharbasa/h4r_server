@@ -32,8 +32,13 @@ class ApiV1::HousePicsController < ApiV1::BaseController
          image: { bytes: imageData4Labels}
     )
     
+    labels = "" #consider labels that are more than 50% confidence
+    separator = "|"
     resp.labels.each do |label|
       logger.info "aws rekognition labels:: label=#{label.name}, confidence=#{label.confidence.to_i}"
+      if(label.confidence.to_i >= 50) 
+         labels = labels + label.name + separator
+      end
       if HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name] && label.confidence.to_i > HousePic::HOUSE_PIC_SETTINGS::PROHIBITED_CONTENT[label.name]
         @errMsg = "Hey there is prohibited content in the image(#{label.name}-#{label.confidence.to_i})."
         puts @errMsg
@@ -45,17 +50,26 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     resp = client.detect_text(
          image: { bytes: imageData4Text}
     )
+    text = ""
+    
     resp.text_detections.each do |text_detection|
       logger.info "aws rekognition text:: type=#{text_detection.type}, text=#{text_detection.detected_text}, confidence=#{text_detection.confidence.to_i}"
+      if((text_detection.detected_text.is_a? String) && (text_detection.confidence.to_i >=50))
+        text = text + text_detection.detected_text + separator
+      end
     end
     
     @house_pic = HousePic.create(params[:house_pic])
     @house_pic.created_by = (current_user == nil)? nil:current_user.id
+    @house_pic.rekognition_labels = labels.truncate(500)
+    @house_pic.rekognition_text = text.truncate(2000)
     
     if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can upload pics
       
       if @house_pic.save
         #UserMailer.welcome_email(@user).deliver_now #deliver_later
+        searchString = @house.prepareSearchString
+        @house.update_attributes(:search => searchString)
         render 'show', :status => :created
       else
         @errMsg = @house_pic.errors.full_messages
@@ -99,6 +113,9 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     @house_pic = HousePic.find(params[:id])
     if canUserUpdate? @house_pic # only house owner or admin can upload pics
       if @house_pic.destroy
+        house = @house_pic.house
+        searchString = house.prepareSearchString
+        house.update_attributes(:search => searchString)
         render 'destroy', :status => :ok
       else
         @errMsg = @house_pic.errors.full_messages
