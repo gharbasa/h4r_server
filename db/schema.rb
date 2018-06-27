@@ -108,6 +108,8 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.integer  "house_id",             limit: 4,                   null: false
     t.string   "picture_file_name",    limit: 255
     t.string   "picture_content_type", limit: 255
+    t.string   "rekognition_labels", limit: 1000
+    t.string   "rekognition_text", limit: 2000
     t.integer  "picture_file_size",    limit: 4
     t.datetime "picture_updated_at"
     t.string   "about_pic",            limit: 255,                 null: false
@@ -140,7 +142,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.integer  "no_of_bedrooms",  limit: 4,    default: 1
     t.integer  "no_of_bathrooms", limit: 4,    default: 1
     t.integer  "floor_number",    limit: 4,    default: 1
-    t.string   "search",          limit: 500
+    t.string   "search",          limit: 2000
   end
   add_index "houses", ["search"], name: "search_index", using: :btree
 

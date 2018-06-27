@@ -64,8 +64,6 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.updated_by = current_user.id
       params[:house][:search] = @house.prepareSearchString
       if @house.update_attributes(params[:house])
-        #searchString = @house.prepareSearchString
-        #@house.update_attributes(:search => searchString)
         flash[:house] = "House updated!"
         render 'show', :status => :ok
       else
