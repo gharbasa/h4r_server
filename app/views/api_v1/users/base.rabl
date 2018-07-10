@@ -20,7 +20,8 @@ attributes :id,
            :community_id,
            :subscriptionType,
            :subscriptionEndDate,
-           :createdAt
+           :createdAt,
+           :active
             
 attributes :admin? => :admin,
            :guest? => :guest

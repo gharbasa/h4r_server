@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.integer  "no_of_bathrooms", limit: 4,    default: 1
     t.integer  "floor_number",    limit: 4,    default: 1
     t.string   "search",          limit: 2000
+    t.integer  "account_id",      limit: 4
   end
   add_index "houses", ["search"], name: "search_index", using: :btree
 
@@ -183,6 +184,17 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.string   "note",                   limit: 1000
     t.datetime "payment_date"
     t.boolean  "active",                              default: true
+  end
+  
+  create_table "accounts", force: :cascade do |t|
+    t.float    "baseline_amt",       limit: 24,   default: 0
+    t.datetime "baseline_date",      limit: 24,   default: 0
+    t.integer  "created_by",         limit: 4
+    t.integer  "updated_by",         limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "note",               limit: 1000
+    t.boolean  "active",                          default: true
   end
 
   create_table "property_mgmts", force: :cascade do |t|
@@ -329,7 +341,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.datetime "dob"
     t.string   "avatar",                  limit: 255
     t.boolean  "ndelete",                             default: false
-    t.boolean  "active",                              default: false
+    t.boolean  "active",                              default: true
     t.boolean  "approved",                            default: false
     t.boolean  "confirmed",                           default: false
     t.string   "adhaar_no",               limit: 255
@@ -346,5 +358,6 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.integer  "subscription_type",       limit: 4,   default: 1
     t.datetime "subscription_good_until"
   end
-
+  
+  
 end
