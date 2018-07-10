@@ -75,9 +75,9 @@ class ApiV1::AccountsController < ApiV1::BaseController
   
   #Yes if Admin
   #For non-admin, there has to be a house associated with the account and the current login user is not a tenant-only  
-  def isAuthorized?
+  def isAuthorized? account
     return true if current_user.admin?
-    house = House.where(:account => @account)
+    house = House.where(:account => account)
     return false if (house.nil || current_user.tenantOnly?)
   end
   
