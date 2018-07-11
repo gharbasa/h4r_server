@@ -21,4 +21,6 @@ attributes  :tenant? => :tenant,
             :property_mgmt_mgr? => :property_mgmt_mgr,
             :property_mgmt_emp? => :property_mgmt_emp,
             :agency_collection_emp? => :agency_collection_emp,
-            :agency_collection_mgr? => :agency_collection_mgr
+            :agency_collection_mgr? => :agency_collection_mgr,
+            :maintenance? => :maintenance
+            

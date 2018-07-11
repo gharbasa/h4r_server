@@ -77,6 +77,8 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
       permission = User::USER_ACL::AGENCY_COLLECTION_MGR
     elsif (params[:updateType] == "agency_collection_emp")
       permission = User::USER_ACL::AGENCY_COLLECTION_EMP
+    elsif (params[:updateType] == "maintenance")
+      permission = User::USER_ACL::MAINTENANCE
     end #end of main if
     
     #if(params[updateType] == true) #Is there a previous tenant already associated with a house
@@ -146,7 +148,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
     end #end of check for new user
     
     if(!(@userhouselink.nil?) && @userhouselink.send("#{updateType}?".to_sym))
-      print "\n House and User link thats going to be demoted from #{updateType} is =" + @userhouselink.id.to_s
+      print "\n House and User link " + @userhouselink.id.to_s + " will be demoted from #{updateType}" 
       @userhouselink.role = @userhouselink.role - aclNumber
       @userhouselink.updated_by = current_user.id
       if(@userhouselink.role <= 0)
@@ -163,7 +165,7 @@ class ApiV1::UserHouseLinksController < ApiV1::BaseController
         return
       end
     else
-      print "\n There is no #{updateType} to the house. Ignore and do nothing"
+      print "\n There is no previous #{updateType} to the house. Ignore and do nothing"
       flash[:user_house_link] = "\n User house link is updated successfully."
       render 'show', :status => :ok 
     end
