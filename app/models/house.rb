@@ -120,6 +120,16 @@ class House < ActiveRecord::Base
     user_obj
   end
   
+  def maintenance
+    user_obj = nil
+    user_house_links.each do |link|
+      if link.maintenance? && (user_obj.nil?)
+        user_obj = link.user
+      end
+    end
+    user_obj
+  end
+  
   def verified?
     verified == VERIFICATION::VERIFIED
   end

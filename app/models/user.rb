@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   
   def otherRole?
     !(admin? && guest? && tenant? && land_lord? && accountant? &&
-      property_mgmt_mgr? && property_mgmt_emp? && agency_collection_emp? && agency_collection_mgr?)
+      property_mgmt_mgr? && property_mgmt_emp? && agency_collection_emp? && agency_collection_mgr? && maintenance?)
   end
   
   #check if the user is a owner of this house (param)
@@ -67,6 +67,15 @@ class User < ActiveRecord::Base
     user_house_links.each do |user_house_link|
             return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
                      user_house_link.land_lord?
+    end
+    return false
+  end
+  
+  #check if the user is a maintenance of this house (param)
+  def maintenance? (house)
+    user_house_links.each do |user_house_link|
+            return true if !user_house_link.house.nil? && user_house_link.house.id == house.id &&
+                     user_house_link.maintenance?
     end
     return false
   end

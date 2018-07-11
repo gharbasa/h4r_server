@@ -6,15 +6,20 @@ module AclCheckOnRole
    end
    
    module USER_ACL
-    GUEST        = 0 #default
-    ADMIN        = 1 << 16 #65536, 100000000
-    TENANT       = 1 << 15 #32768, 010000000
-    LAND_LORD    = 1 << 14 #16384, 001000000
-    ACCOUNTANT   = 1 << 13 #8192
-    PROPERTY_MGMT_MGR = 1 << 12 #4096 Property management manager
-    PROPERTY_MGMT_EMP  = 1 << 11 #2048 Property management employee
-    AGENCY_COLLECTION_EMP    = 1 << 10 #1024 Collection agency emp
-    AGENCY_COLLECTION_MGR    = 1 << 9 #512 Collection agency mgr
+    GUEST                 = 0 #default
+    ADMIN                 = 1 << 16 #65536, 100000000
+    TENANT                = 1 << 15 #32768, 010000000
+    LAND_LORD             = 1 << 14 #16384, 001000000
+    ACCOUNTANT            = 1 << 13 #8192
+    PROPERTY_MGMT_MGR     = 1 << 12 #4096 Property management manager
+    PROPERTY_MGMT_EMP     = 1 << 11 #2048 Property management employee
+    AGENCY_COLLECTION_EMP = 1 << 10 #1024 Collection agency emp
+    AGENCY_COLLECTION_MGR = 1 << 9 #512 Collection agency mgr
+    MAINTENANCE           = 1 << 8 #256 Mainenance Contractor
+  end
+  
+  def maintenance?
+    (role & USER_ACL::MAINTENANCE) == USER_ACL::MAINTENANCE
   end
   
   def admin?
