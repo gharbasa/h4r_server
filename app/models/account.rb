@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     logger.info("Account =" + note + "(" + id.to_s + ")" + " Baseline Amount=" + totalAmount.to_s + " as of date=" + baselineDate)
     houses.each do |house|
       house.user_house_contracts.each do |user_house_contract|
-        payments = user_house_contract.payments.where("payment_date > ?", baseline_date)
+        payments = user_house_contract.payments.active.afterDate(baseline_date)
         payments.each do |payment| #receivables/payments after account.baseline_date
           if(user_house_contract.isIncomeContract)
             logger.info("Adding income=" + payment.amount.to_s + " of dated=" + payment.paymentDate)

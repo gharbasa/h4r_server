@@ -36,6 +36,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       end_date = DateTime.strptime(params[:contract_end_date], date_format).to_date
       params[:contract_start_date] = start_date.to_s(:custom_datetime)
       params[:contract_end_date] = end_date.to_s(:custom_datetime)
+      params[:created_by] = current_user.id
       @user_house_contract = UserHouseContract.create(params[:user_house_contract])
       
       if @user_house_contract.save
@@ -43,11 +44,17 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
           @previousContract.next_contract_id = @user_house_contract.id
           @previousContract.save
         end
-        #if the contract is tenant, then mark the house closed
+        #if the contract is tenant, then mark the house as not open any more
         if(@user_house_contract.tenant?)
           house = House.find(@user_house_contract.house_id)
           house.is_open = false;
           house.save
+        end
+        
+        if(@user_house_contract.onetime_contract == true)
+           #If the contract is a onetime payment, create a payment with total amount and mark contract inactive
+           logger.info("User wants to create onetime pay contract.")
+           createOneTimePayment @user_house_contract
         end
         
         render 'show', :status => :created
@@ -64,6 +71,7 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
 
   def update
     @user_house_contract = UserHouseContract.find(params[:id])
+    previousOnetimePayflag = @user_house_contract.onetime_contract
     @house = House.find(@user_house_contract.house_id)
     #@userhouselink = @user_house_contract.user_house_link
     if isAuth(@house) # only house owner or admin can create contract entry
@@ -86,7 +94,15 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       contract_end_date = Date.strptime(params[:contract_end_date], date_format)
       if @user_house_contract.update_attributes(:contract_start_date => contract_start_date, :contract_end_date => contract_end_date,
                                                         :annual_rent_amount => params[:annual_rent_amount], :monthly_rent_amount => params[:monthly_rent_amount],
-                                                        :note => params[:note], :active => params[:active], :contract_type => params[:contract_type])
+                                                        :note => params[:note], :active => params[:active], :contract_type => params[:contract_type],
+                                                        :onetime_contract => params[:onetime_contract])
+        
+        if(previousOnetimePayflag == false && @user_house_contract.onetime_contract == true)
+           #If the contract is a onetime payment, create a payment with total amount and mark contract inactive
+           logger.info("User wants to update existing contract to onetime pay contract.")
+           createOneTimePayment @user_house_contract
+        end
+        
         flash[:user_house_contract] = "User House Contract updated!"
         render 'show', :status => :ok
       else
@@ -167,6 +183,18 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
     house_id = params[:house_id]
     if house_id
       @house = House.find(house_id)
+    end
+  end
+  
+  def createOneTimePayment user_house_contract
+    payment = Payment.create(:user_house_contract_id => user_house_contract.id,
+                             :amount => user_house_contract.annual_rent_amount,
+                             :payment_date => user_house_contract.contract_end_date,
+                             :note => "System note: Onetime payment contract",
+                             :created_by => current_user.id)
+    if payment.save
+       logger.info("Onetime payment is created successful.")
+       user_house_contract.deactivate!
     end
   end
 end
