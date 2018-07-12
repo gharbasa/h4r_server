@@ -130,7 +130,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     end
 
     contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
-    @payments = Payment.where(:payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc).find_each do |payment|
+    @payments = Payment.active.betweenDates(start_date, end_date).inContracts(contracts).order(payment_date: :asc).find_each do |payment|
       summary[payment.paymentYear] += payment.amount  
     end
     
@@ -160,9 +160,9 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     date_format = Rails.configuration.app_config[:date_format]
     start_date = DateTime.strptime("01-01-#{year}", date_format).to_date #"%d-%m-%Y"
     end_date = DateTime.strptime("31-12-#{year}", date_format).to_date #"%d-%m-%Y"
-    #
+
     contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
-    @payments = Payment.where(:payment_date => start_date.beginning_of_day..end_date.end_of_day, :user_house_contract => contracts).order(payment_date: :asc)
+    @payments = Payment.active.betweenDates(start_date, end_date).inContracts(contracts).order(payment_date: :asc)
   end
   def isAuth user_house_contract
     house = user_house_contract.house

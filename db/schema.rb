@@ -281,6 +281,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.string   "note",                limit: 1000
     t.integer  "next_contract_id",    limit: 4
     t.integer  "contract_type",       limit: 1,    default: 1
+    t.boolean  "onetime_contract",                 default: false
   end
 
   create_table "user_house_links", force: :cascade do |t|
