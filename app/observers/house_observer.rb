@@ -3,14 +3,16 @@ class HouseObserver < ActiveRecord::Observer
   def after_create(house)
     puts "\n--------New House is created, lets make the created user as the owner.\n"
     make_user_house_owner(house)
+    Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: house.cloudsearch_json.to_json, content_type: "application/json"})
   end
 
   def after_update(house)
     notify_change_in_house(house)
+    Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: house.cloudsearch_json.to_json, content_type: "application/json"})
   end
   
   def after_destroy(house)
-
+    Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: house.cloudsearch_json.to_json, content_type: "application/json"})
   end
 
   private

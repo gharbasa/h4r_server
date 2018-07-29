@@ -1,7 +1,7 @@
 class ApiV1::HousesController < ApiV1::BaseController
   before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, 
                                   :verified, :notverified, :notes, :create_note, :makeitOpen, :makeitClosed,
-                                  :activate, :inactivate, :list4Reports]
+                                  :activate, :inactivate, :list4Reports, :cloudsearch]
   skip_before_action :verify_authenticity_token
   before_filter :load_user, :only => [:index]
   
@@ -138,7 +138,6 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.active = false
       if @house.save
         flash[:house] = "House has been successfully inactivated!"
-        
         #@owner = @house.owner
         #if !@owner.nil?
         #  #send email to house owner  
@@ -165,7 +164,6 @@ class ApiV1::HousesController < ApiV1::BaseController
       @house.active = true
       if @house.save
         flash[:house] = "House has been successfully activated!"
-        
         #@owner = @house.owner
         #if !@owner.nil?
         #  #send email to house owner  
@@ -279,6 +277,49 @@ class ApiV1::HousesController < ApiV1::BaseController
               else
                 []
               end
+  end
+  
+  def cloudsearch
+    #https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/CloudSearchDomain/Client.html#search-instance_method
+    resp = Rails.configuration.awsCSDomainClientForSearch.search({query: params[:search] ,
+                                                                  return: "_all_fields",
+                                                                  sort: "name asc, updated_at desc",
+                                                                  highlight:"{ \"name\": {\"format\": \"text\"},\"description\": {\"format\": \"text\"},\"address\": {\"format\": \"text\"}}",
+                                                                  filter_query: "active:1", #Search for active houses only
+                                                                  size: 10,
+                                                                  start:0,
+                                                                  facet: "{ \"community_id\": {\"sort\": \"count\",\"size\":3}}"
+                                                                  })
+    @houses = []
+    print resp
+    #<struct Aws::CloudSearchDomain::Types::SearchResponse status=#<struct Aws::CloudSearchDomain::Types::SearchStatus timems=15, rid="2vHut84s2xcKqzEc">, hits=#<struct Aws::CloudSearchDomain::Types::Hits found=1, start=0, cursor=nil, hit=[#<struct Aws::CloudSearchDomain::Types::Hit id="1", fields={"updated_at"=>["2018-07-29T02:30:04.882Z"], "community"=>["Devanshire Hills"], "is_open"=>["0"], "no_of_bedrooms"=>["3"], "verified"=>["1"], "processing_fee"=>["2001.0"], "no_of_floors"=>["1"], "no_of_portions"=>["2"], "no_of_bathrooms"=>["2"], "description"=>["A very spacious gracious  whole hearted house A very spacious gracious d whole hearted house"], "address1"=>["22/Part, Vinayak Nagar"], "address2"=>["Yanamalakudur"], "address3"=>["500010"], "address4"=>["Andhra Pradesh, India"], "community_id"=>["1"], "floor_number"=>["1"], "address"=>["22/Part, Vinayak Nagar ^ Yanamalakudur ^ 500010 ^ Andhra Pradesh, India"], "active"=>["1"], "name"=>["Ali Manzil"], "created_at"=>["2016-01-31T02:09:38Z"], "rekognition_labels"=>["J1 Handnriten|fonts|YOU CAN DOWNLOAD AND USE|FOR FREE|J1|Handnriten|fonts|YOU|CAN|DOWNLOAD|AND|USE|FOR|FREE|", "Test Your Reactions!|Click on the squares and circles as quickly as you can!!|Your time: 0.982s|Test|Your|Reactions!|Click|on|the|squares|and|circles|as|quickly|as|you|can!!|Your|time:|0.982s|"], "no_of_pics"=>["2"]}, exprs=nil, highlights={"name"=>"*Ali* Manzil", "description"=>"A very spacious gracious  whole hearted house A very spacious gracious d whole hearted house", "address"=>"22/Part, Vinayak Nagar ^ Yanamalakudur ^ 500010 ^ Andhra Pradesh, India"}>]>, facets={"community_id"=>#<struct Aws::CloudSearchDomain::Types::BucketInfo buckets=[#<struct Aws::CloudSearchDomain::Types::Bucket value="1", count=1>]>}, stats=nil>
+    resp.hits.hit.each do |house|
+      @houses.push({:id => house.id, 
+                    :name => house.fields['name'][0],
+                    :addr1 => house.fields['address1'][0],
+                    :addr2 => house.fields['address2'][0],
+                    :addr3 => house.fields['address3'][0],
+                    :addr4 => house.fields['address4'][0],
+                    :no_of_portions => house.fields['no_of_portions'][0],
+                    :no_of_floors => house.fields['no_of_floors'][0],
+                    :verified => house.fields['verified'][0],
+                    :processing_fee => house.fields['processing_fee'][0],
+                    :community_id => house.fields['community_id'][0],
+                    :active => house.fields['active'][0],
+                    :created_at => house.fields['created_at'][0],
+                    :updated_at => house.fields['updated_at'][0],
+                    :description => house.fields['description'][0],
+                    :is_open => house.fields['is_open'][0],
+                    :no_of_bedrooms => house.fields['no_of_bedrooms'][0],
+                    :no_of_bathrooms => house.fields['no_of_bathrooms'][0],
+                    :floor_number => house.fields['floor_number'][0],
+                    :no_of_pics => house.fields['no_of_pics'][0],
+                    #:account_id => house.fields['account_id'][0],
+                    :communityName => house.fields['community'][0]
+                  })
+    end
+    
+    #@houses = House.find_all_by_id( houseids )
   end
   
   def load_user

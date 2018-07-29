@@ -15,7 +15,10 @@ development:
   AWS_KEY: <KEY>
   AWS_SECRET: <KEY>
   AWS_REGION: <KEY>
-
+  AWS_CS_REGION: <KEY>
+  CS_DOMAIN_NAME: <KEY>
+  CS_UPLOAD_DOCS_ENDPOINT: <KEY>
+  CS_SEARCH_DOCS_ENDPOINT: <KEY>
 production:
   date_format: "%d-%m-%Y"
   ADMIN_DEFAULT_SUBSCRIPTION: 5

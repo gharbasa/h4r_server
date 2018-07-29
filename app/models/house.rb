@@ -23,15 +23,12 @@ class House < ActiveRecord::Base
   end           
   
   def prepareSearchString
-    communityName = ""
-    communityName = community.name if !community.nil?
-    searchString = ((name.presence || "") + TOKEN + 
+    searchString = (name.presence || "") + TOKEN + 
           (addr1.presence || "") + TOKEN + 
           (addr2.presence || "") + TOKEN + 
           (addr3.presence || "") + TOKEN + 
           (addr4.presence || "") + TOKEN + 
-          (description.presence || "")  + TOKEN + 
-          (communityName.presence || ""))
+          (description.presence || "")  + TOKEN + communityName 
           
     house_pics.each do |house_pic|
       searchString = searchString + TOKEN + (house_pic.rekognition_labels.presence || "")  if !house_pic.rekognition_labels.nil?
@@ -39,7 +36,50 @@ class House < ActiveRecord::Base
     end
     searchString.truncate(2000).upcase
   end
-
+  
+  def cloudsearch_json
+      
+      address = (addr1.presence || "") + TOKEN +
+                          (addr2.presence || "") + TOKEN +
+                          (addr3.presence || "") + TOKEN +
+                          (addr4.presence || "")
+      fields = {}
+      fields["active"] = active
+      fields["address"] = address
+      fields["address1"] = addr1.presence || ""
+      fields["address2"] = addr2.presence || ""
+      fields["address3"] = addr3.presence || ""
+      fields["address4"] = addr4.presence || ""
+      fields["community"] = communityName
+      fields["community_id"] = community_id.presence || ""
+      fields["created_at"] = created_at
+      fields["description"] = description.presence || ""
+      fields["floor_number"] = floor_number
+      fields["is_open"] = is_open
+      fields["name"] = (name.presence || "")
+      fields["no_of_bathrooms"] = no_of_bathrooms
+      fields["no_of_bedrooms"] = no_of_bedrooms
+      fields["no_of_floors"] = no_of_floors
+      fields["no_of_pics"] = no_of_pics
+      fields["no_of_portions"] = no_of_portions
+      fields["processing_fee"] = processing_fee
+      fields["updated_at"] = updated_at
+      fields["verified"] = verified
+      
+      #fields["houseid"] = id
+      rekognition_labels = []
+      house_pics.each do |house_pic|
+        rekognition_labels.push(house_pic.rekognition_text.presence || "") if !house_pic.rekognition_text.nil? 
+      end
+      fields["rekognition_labels"] = rekognition_labels
+      
+      data = {}
+      data["type"] = "add"
+      data["id"] = id
+      data["fields"] = fields
+      [data]
+  end
+  
   def guest
     user_obj = nil
     user_house_links.each do |link|
@@ -149,5 +189,11 @@ class House < ActiveRecord::Base
   
   def no_of_pics
     house_pics.count 
+  end
+  
+  def communityName
+    commName = ""
+    commName = community.name if !community.nil?
+    commName
   end
 end

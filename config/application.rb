@@ -43,9 +43,7 @@ module H4R #This is a namespace for routes.rb
     end
     config.load_h4r_config
 
-  
-  
-  
+    Aws::VERSION =  Gem.loaded_specs["aws-sdk"].version
     #AWS Configuration
     Aws.config.update({
       credentials: Aws::Credentials.new(Rails.configuration.app_config[:AWS_KEY], Rails.configuration.app_config[:AWS_SECRET])
@@ -67,7 +65,32 @@ module H4R #This is a namespace for routes.rb
         resource '*', headers: :any, methods: [:get, :post, :options, :put, :delete], credentials: true
       end
     end
-  
+    
+    def config.load_cloudsearch_config
+      #https://docs.aws.amazon.com/sdkforruby/api/Aws/CloudSearch/Client.html#describe_domains-instance_method
+      #Identify endpoints for cloudsearch
+      #https://docs.aws.amazon.com/cloudsearch/latest/developerguide/what-is-cloudsearch.html
+      self.awsCSClient = Aws::CloudSearch::Client.new(region: Rails.configuration.app_config[:AWS_CS_REGION])
+      resp = self.awsCSClient.describe_domains({domain_names: [Rails.configuration.app_config[:CS_DOMAIN_NAME]]})
+      resp[:domain_status_list].each do |domain|
+        puts domain[:domain_id]
+      end
+      
+      self.awsCSDomainClientForAdd = client = Aws::CloudSearchDomain::Client.new(endpoint:Rails.configuration.app_config[:CS_UPLOAD_DOCS_ENDPOINT])
+      self.awsCSDomainClientForSearch = client = Aws::CloudSearchDomain::Client.new(endpoint:Rails.configuration.app_config[:CS_SEARCH_DOCS_ENDPOINT])
+      
+    end
+    config.load_cloudsearch_config
+    
+    
+    
+    #resp = csClient.build_suggesters({
+    #  domain_name: "maaghar" # required
+    #})
+    #puts "Abed.field_names..:" . resp.field_names #=> Array
+    #puts "Abed.field_names[0]..:" . resp.field_names[0] #=> String
+
+
     #Register observers here
     #active_observers = Dir["app/observers/*"].map do |i|
     #                     File.basename(i, ".rb")
