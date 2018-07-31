@@ -61,7 +61,7 @@ module H4R #This is a namespace for routes.rb
     
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do
-        origins 'http://localhost:4200'
+        origins Rails.configuration.app_config[:CLIENT_DOMAIN]
         resource '*', headers: :any, methods: [:get, :post, :options, :put, :delete], credentials: true
       end
     end

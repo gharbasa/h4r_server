@@ -19,6 +19,7 @@ development:
   CS_DOMAIN_NAME: <%= ENV['CS_DOMAIN_NAME'] %>
   CS_UPLOAD_DOCS_ENDPOINT: <%= ENV['CS_UPLOAD_DOCS_ENDPOINT'] %>
   CS_SEARCH_DOCS_ENDPOINT: <%= ENV['CS_SEARCH_DOCS_ENDPOINT'] %>
+  CLIENT_DOMAIN: <%= ENV['FRONT_END_DOMAIN_URL'] %>
   
 production:
   date_format: "%d-%m-%Y"
