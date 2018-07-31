@@ -70,6 +70,8 @@ class ApiV1::HousePicsController < ApiV1::BaseController
         #UserMailer.welcome_email(@user).deliver_now #deliver_later
         searchString = @house.prepareSearchString
         @house.update_attributes(:search => searchString)
+        ##Update AWS Cloud Search
+        Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: @house.cloudsearch_json.to_json, content_type: "application/json"})
         render 'show', :status => :created
       else
         @errMsg = @house_pic.errors.full_messages
@@ -108,7 +110,6 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     end
   end
 
-  
   def destroy
     @house_pic = HousePic.find(params[:id])
     if canUserUpdate? @house_pic # only house owner or admin can upload pics
@@ -116,6 +117,8 @@ class ApiV1::HousePicsController < ApiV1::BaseController
         house = @house_pic.house
         searchString = house.prepareSearchString
         house.update_attributes(:search => searchString)
+        ##Update AWS Cloud Search
+        Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: house.cloudsearch_json.to_json, content_type: "application/json"})
         render 'destroy', :status => :ok
       else
         @errMsg = @house_pic.errors.full_messages

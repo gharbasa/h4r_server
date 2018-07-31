@@ -48,7 +48,9 @@ gem 'sprockets', '2.12.3' #This is required for templates to work
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem "audited-activerecord", "~> 4.0"
-gem 'aws-sdk', '~> 2.3'
+#gem 'aws-sdk', '~> 2.3'
+gem 'aws-sdk', '~> 3.0.1'
+gem 'aws-sdk-cloudsearch', "~>1.1.0"
 gem 'rack-cors'
  
 # Use ActiveModel has_secure_password

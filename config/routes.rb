@@ -74,6 +74,7 @@ H4R::Application.routes.draw do
       collection do
         #put :reorder
         get :search
+        get :cloudsearch
         get :list4Reports
       end
       member do
