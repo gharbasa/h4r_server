@@ -1,5 +1,2 @@
-collection @houses
-
-node do |s|
-  s
-end
+object @searchResults => :results
+    attributes :results, :found

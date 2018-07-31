@@ -12,13 +12,14 @@ development:
   date_format: "%d-%m-%Y"
   ADMIN_DEFAULT_SUBSCRIPTION: 5
   SUBSCRIPTION_GOOD_FOR: 6 #any promoted subscription is good for 6 months
-  AWS_KEY: <KEY>
-  AWS_SECRET: <KEY>
-  AWS_REGION: <KEY>
-  AWS_CS_REGION: <KEY>
-  CS_DOMAIN_NAME: <KEY>
-  CS_UPLOAD_DOCS_ENDPOINT: <KEY>
-  CS_SEARCH_DOCS_ENDPOINT: <KEY>
+  AWS_KEY: <%= ENV['AWS_KEY'] %>
+  AWS_SECRET: <%= ENV['AWS_SECRET'] %>
+  AWS_REGION: <%= ENV['AWS_REGION'] %> #Ohio doesn't have couldsearch
+  AWS_CS_REGION: <%= ENV['AWS_CS_REGION'] %> #CS-CloudSearch region
+  CS_DOMAIN_NAME: <%= ENV['CS_DOMAIN_NAME'] %>
+  CS_UPLOAD_DOCS_ENDPOINT: <%= ENV['CS_UPLOAD_DOCS_ENDPOINT'] %>
+  CS_SEARCH_DOCS_ENDPOINT: <%= ENV['CS_SEARCH_DOCS_ENDPOINT'] %>
+  
 production:
   date_format: "%d-%m-%Y"
   ADMIN_DEFAULT_SUBSCRIPTION: 5
