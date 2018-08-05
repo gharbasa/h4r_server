@@ -42,6 +42,8 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
       if @user_house_contract.save
         if(params[:renew] == true)
           @previousContract.next_contract_id = @user_house_contract.id
+          #If the current new contract (@user_house_contract) is a onetime payment contract, then do not inactivate the previous contract.   
+          @previousContract.active = false if (@user_house_contract.onetime_contract != false) 
           @previousContract.save
         end
         #if the contract is tenant, then mark the house as not open any more
