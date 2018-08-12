@@ -19,7 +19,8 @@ class ApiV1::UsersController < ApiV1::BaseController
   
   def create
     params[:user][:created_by] = (current_user == nil)? nil:current_user.id
-
+    params[:user][:entitlement] = User::USER_ACL::DEFAULT_ENTITLEMENT
+  
     processAvatar "new"
     #TODO: If the user is created after August month, make the subscriptionType 2, so that the user can view next year report
     @user = User.create(params[:user])
