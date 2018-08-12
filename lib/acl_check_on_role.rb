@@ -17,7 +17,7 @@ module AclCheckOnRole
     AGENCY_COLLECTION_MGR = 1 << 9 #512 Collection agency mgr
     MAINTENANCE           = 1 << 8 #256 Mainenance Contractor
     #User can create these many types of contracts
-    #=49920,1100001100000000
+    #=49408,1100001100000000
     DEFAULT_ENTITLEMENT = TENANT + LAND_LORD + MAINTENANCE + AGENCY_COLLECTION_MGR
   end
   
