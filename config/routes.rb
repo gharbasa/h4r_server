@@ -37,6 +37,7 @@ H4R::Application.routes.draw do
         get :houseContracts  #Get all the house contracts associated with this user
         put :resetPassword
         put :changeSubscription
+        put :entitlement
       end
       resources :notifications, :only => [:index] do
         member do
