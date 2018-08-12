@@ -356,7 +356,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "community_id",            limit: 4
-    t.integer  "entitlement",             limit: 4,   default: 54016 #User can create these many types of contracts.
+    t.integer  "entitlement",             limit: 4,   default: 49920 #User can create these many types of contracts.
     t.integer  "subscription_type",       limit: 4,   default: 1
     t.datetime "subscription_good_until"
   end
