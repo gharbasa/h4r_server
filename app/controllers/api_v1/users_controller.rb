@@ -1,7 +1,9 @@
 class ApiV1::UsersController < ApiV1::BaseController
   #before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:index, :show, :edit, :update, :destroy, :search, :verified,
-                                         :promote2Admin, :demoteFromAdmin, :houseContracts, :resetPassword, :changeSubscription]
+                                         :promote2Admin, :demoteFromAdmin, :houseContracts, :resetPassword, :changeSubscription,
+                                         :entitlement
+                                         ]
   skip_before_action :verify_authenticity_token
   
   def new
@@ -19,7 +21,8 @@ class ApiV1::UsersController < ApiV1::BaseController
   
   def create
     params[:user][:created_by] = (current_user == nil)? nil:current_user.id
-
+    params[:user][:entitlement] = User::USER_ACL::DEFAULT_ENTITLEMENT
+  
     processAvatar "new"
     #TODO: If the user is created after August month, make the subscriptionType 2, so that the user can view next year report
     @user = User.create(params[:user])
@@ -103,6 +106,26 @@ class ApiV1::UsersController < ApiV1::BaseController
     end
   end
   
+  def entitlement
+    #Only the admin user can perform this operation
+    @user = User.find(params[:id]) 
+    if current_user.admin? # only admin can mark house as verified
+      @user.updated_by = current_user.id
+      @user.entitlement = params[:entitlement]
+      if @user.save
+        flash[:house] = "User Entitlement has been successfully updated!"
+        render 'show', :status => :ok
+      else
+        @errMsg = @user.errors.full_messages[0]
+        print @errMsg
+        render 'error', :status => :unprocessable_entity
+      end
+    else
+      @errMsg = "User is not admin."
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
   #To mark that the user is verified,no email notification
   def verified
     @user = User.find(params[:id]) 

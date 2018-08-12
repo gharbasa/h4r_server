@@ -21,7 +21,8 @@ attributes :id,
            :subscriptionType,
            :subscriptionEndDate,
            :createdAt,
-           :active
+           :active,
+           :entitlement
             
 attributes :admin? => :admin,
            :guest? => :guest
