@@ -6,15 +6,15 @@ class ApiV1::UserHouseContractsController < ApiV1::BaseController
 
   def index
       if (@user)
-        @user_house_contracts = UserHouseContract.where(user: @user).includes(:house).order('houses.name ASC')
+        @user_house_contracts = UserHouseContract.where(user: @user).includes(:house).order('houses.name ASC, contract_start_date DESC')
       elsif (@house)
-        @user_house_contracts = UserHouseContract.where(house: @house)
+        @user_house_contracts = UserHouseContract.where(house: @house).order('contract_start_date DESC')
       else
         if(params[:community_id].nil?)
-          @user_house_contracts = UserHouseContract.all.includes(:house).order('houses.name ASC')
+          @user_house_contracts = UserHouseContract.all.includes(:house).order('houses.name ASC, contract_start_date DESC')
         else
           community = Community.find(params[:community_id])
-          @user_house_contracts = UserHouseContract.where(:house => community.houses).includes(:house).order('houses.name ASC')
+          @user_house_contracts = UserHouseContract.where(:house => community.houses).includes(:house).order('houses.name ASC, contract_start_date DESC')
         end
       end
   end
