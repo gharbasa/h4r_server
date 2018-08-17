@@ -66,4 +66,12 @@ class UserHouseContract < ActiveRecord::Base
   def tenant?
     role == USER_ACL::TENANT
   end
+  
+  def totalAmountSofar
+    total = 0;
+    payments.each do |payment|
+      total += payment.amount if payment.active
+    end
+    total
+  end
 end
