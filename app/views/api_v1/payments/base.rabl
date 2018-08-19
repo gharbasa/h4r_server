@@ -11,3 +11,4 @@ attributes :id,
            :createdAt, :updatedAt, :active
 
 
+child(:user_house_contract => :contract) { attributes :note}
