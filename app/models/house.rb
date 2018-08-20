@@ -51,7 +51,7 @@ class House < ActiveRecord::Base
       fields["address3"] = addr3.presence || ""
       fields["address4"] = addr4.presence || ""
       fields["community"] = communityName
-      fields["community_id"] = community_id.presence || ""
+      fields["community_id"] = community_id.presence || 0
       fields["created_at"] = created_at
       fields["description"] = description.presence || ""
       fields["floor_number"] = floor_number

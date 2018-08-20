@@ -295,6 +295,8 @@ class ApiV1::HousesController < ApiV1::BaseController
     found = resp.hits.found
     #<struct Aws::CloudSearchDomain::Types::SearchResponse status=#<struct Aws::CloudSearchDomain::Types::SearchStatus timems=15, rid="2vHut84s2xcKqzEc">, hits=#<struct Aws::CloudSearchDomain::Types::Hits found=1, start=0, cursor=nil, hit=[#<struct Aws::CloudSearchDomain::Types::Hit id="1", fields={"updated_at"=>["2018-07-29T02:30:04.882Z"], "community"=>["Devanshire Hills"], "is_open"=>["0"], "no_of_bedrooms"=>["3"], "verified"=>["1"], "processing_fee"=>["2001.0"], "no_of_floors"=>["1"], "no_of_portions"=>["2"], "no_of_bathrooms"=>["2"], "description"=>["A very spacious gracious  whole hearted house A very spacious gracious d whole hearted house"], "address1"=>["22/Part, Vinayak Nagar"], "address2"=>["Yanamalakudur"], "address3"=>["500010"], "address4"=>["Andhra Pradesh, India"], "community_id"=>["1"], "floor_number"=>["1"], "address"=>["22/Part, Vinayak Nagar ^ Yanamalakudur ^ 500010 ^ Andhra Pradesh, India"], "active"=>["1"], "name"=>["Ali Manzil"], "created_at"=>["2016-01-31T02:09:38Z"], "rekognition_labels"=>["J1 Handnriten|fonts|YOU CAN DOWNLOAD AND USE|FOR FREE|J1|Handnriten|fonts|YOU|CAN|DOWNLOAD|AND|USE|FOR|FREE|", "Test Your Reactions!|Click on the squares and circles as quickly as you can!!|Your time: 0.982s|Test|Your|Reactions!|Click|on|the|squares|and|circles|as|quickly|as|you|can!!|Your|time:|0.982s|"], "no_of_pics"=>["2"]}, exprs=nil, highlights={"name"=>"*Ali* Manzil", "description"=>"A very spacious gracious  whole hearted house A very spacious gracious d whole hearted house", "address"=>"22/Part, Vinayak Nagar ^ Yanamalakudur ^ 500010 ^ Andhra Pradesh, India"}>]>, facets={"community_id"=>#<struct Aws::CloudSearchDomain::Types::BucketInfo buckets=[#<struct Aws::CloudSearchDomain::Types::Bucket value="1", count=1>]>}, stats=nil>
     resp.hits.hit.each do |house|
+      communitName = ""
+      communitName = house.fields['community'][0] if house.fields['community_id'][0] != "0" 
       houses.push({:id => house.id, 
                     :name => house.fields['name'][0],
                     :addr1 => house.fields['address1'][0],
@@ -316,7 +318,7 @@ class ApiV1::HousesController < ApiV1::BaseController
                     :floor_number => house.fields['floor_number'][0],
                     :no_of_pics => house.fields['no_of_pics'][0],
                     #:account_id => house.fields['account_id'][0],
-                    :communityName => house.fields['community'][0]
+                    :communityName => communitName 
                   })
     end
     @searchResults = OpenStruct.new({:found => found, :results => houses})
