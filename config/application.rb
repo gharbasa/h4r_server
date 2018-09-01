@@ -50,7 +50,9 @@ module H4R #This is a namespace for routes.rb
     })
     Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
     Aws.config.update({log_level: :debug})
-  
+    
+    config.web_console.whitelisted_ips = '127.0.0.1'
+    
     config.paperclip_defaults = {
       :storage => :s3,
       :preserve_files => true,
