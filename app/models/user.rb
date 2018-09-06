@@ -231,6 +231,35 @@ class User < ActiveRecord::Base
     self.avatar = open(url)
   end
   
+  def self.prepareDefaultAvatar
+    print "Its a new user registration, assign default avatar."
+    myAvatar = {:data => USER_AVATAR_SETTINGS::DEFAULT_AVATAR,
+                :filename => USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILENAME,
+                :content_type => USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILETYPE
+              }
+    
+    data = StringIO.new(Base64.decode64(myAvatar[:data]))
+    data.class.class_eval { attr_accessor :original_filename, :content_type }
+    data.original_filename = myAvatar[:filename]
+    data.content_type = myAvatar[:content_type]
+    return data
+  end
+  
+  def self.prepareUserAvatar myAvatar
+    
+    if (myAvatar.is_a?(String)) #Its a URL
+      print "No image base64 data in the avatar image, ignore processing image."
+      return ""
+    end
+    
+    data = StringIO.new(Base64.decode64(myAvatar[:data]))
+    data.class.class_eval { attr_accessor :original_filename, :content_type }
+    data.original_filename = myAvatar[:filename]
+    data.content_type = myAvatar[:content_type]
+    return data
+  end
+  
+  
   #def password
   #  @password ||= Password.new(password_hash)
   #end

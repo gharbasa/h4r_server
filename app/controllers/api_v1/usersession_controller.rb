@@ -86,16 +86,7 @@ class ApiV1::UsersessionController < ApiV1::BaseController
           @user.picture_from_url params[:photoUrl]
         else
           logger.info("There is no facebook avatar... taking default one")
-          avatar = {:data => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR,
-                  :filename => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILENAME,
-                :content_type => User::USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILETYPE
-          }
-          
-          data = StringIO.new(Base64.decode64(avatar[:data]))
-          data.class.class_eval { attr_accessor :original_filename, :content_type }
-          data.original_filename = avatar[:filename]
-          data.content_type = avatar[:content_type]
-          @user.avatar = data
+          @user.avatar = User.prepareDefaultAvatar
         end
         
         if @user.save
