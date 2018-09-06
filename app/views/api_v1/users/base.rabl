@@ -22,7 +22,8 @@ attributes :id,
            :subscriptionEndDate,
            :createdAt,
            :active,
-           :entitlement
+           :entitlement,
+           :federated_user_type
             
 attributes :admin? => :admin,
            :guest? => :guest

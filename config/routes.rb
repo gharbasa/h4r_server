@@ -68,6 +68,7 @@ H4R::Application.routes.draw do
       collection do
         #put :reorder
         get :all
+        post:federatedLogin
       end
     end
     

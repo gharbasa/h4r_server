@@ -4,7 +4,8 @@ class User < ActiveRecord::Base
                     :role, :addr1, :addr2, :addr3, :addr4, :phone1, :phone2, :sex,
                     :adhaar_no, :verified, 
                     :active, :approved, :confirmed, :ndelete, :created_by, :updated_by, 
-                    :avatar, :community_id, :subscription_type, :subscription_good_until, :entitlement
+                    :avatar, :community_id, :subscription_type, :subscription_good_until, :entitlement,
+                    :federated_user_type, :facebook_user_id
 
   include ActiveFlag
   include AclCheckOnRole
@@ -221,6 +222,43 @@ class User < ActiveRecord::Base
   def subscriptionEndDate
     subscription_good_until.to_s(:custom_datetime) if !subscription_good_until.nil?
   end
+  
+  def isFacebookUser
+    (federated_user_type & FEDERATED_USER::FACEBOOK) == FEDERATED_USER::FACEBOOK
+  end
+  
+  def picture_from_url(url)
+    self.avatar = open(url)
+  end
+  
+  def self.prepareDefaultAvatar
+    print "Its a new user registration, assign default avatar."
+    myAvatar = {:data => USER_AVATAR_SETTINGS::DEFAULT_AVATAR,
+                :filename => USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILENAME,
+                :content_type => USER_AVATAR_SETTINGS::DEFAULT_AVATAR_FILETYPE
+              }
+    
+    data = StringIO.new(Base64.decode64(myAvatar[:data]))
+    data.class.class_eval { attr_accessor :original_filename, :content_type }
+    data.original_filename = myAvatar[:filename]
+    data.content_type = myAvatar[:content_type]
+    return data
+  end
+  
+  def self.prepareUserAvatar myAvatar
+    
+    if (myAvatar.is_a?(String)) #Its a URL
+      print "No image base64 data in the avatar image, ignore processing image."
+      return ""
+    end
+    
+    data = StringIO.new(Base64.decode64(myAvatar[:data]))
+    data.class.class_eval { attr_accessor :original_filename, :content_type }
+    data.original_filename = myAvatar[:filename]
+    data.content_type = myAvatar[:content_type]
+    return data
+  end
+  
   
   #def password
   #  @password ||= Password.new(password_hash)
