@@ -40,6 +40,7 @@ module H4R #This is a namespace for routes.rb
     
     def config.load_h4r_config
       self.app_config = Rails.application.config_for(:h4r).deep_symbolize_keys
+      self.defaultPassword = "kichidi123"
     end
     config.load_h4r_config
 
@@ -99,5 +100,7 @@ module H4R #This is a namespace for routes.rb
     #                     puts File.basename(i, ".rb")
     #end
     config.active_record.observers = :user_observer, :house_observer, :user_house_link_observer, :community_observer
+    
+    #config.force_ssl = true
   end
 end

@@ -327,7 +327,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.string   "current_login_ip",        limit: 255
     t.string   "last_login_ip",           limit: 255
     t.string   "fname",                   limit: 255,                 null: false
-    t.string   "mname",                   limit: 255,                 null: false
+    t.string   "mname",                   limit: 255
     t.string   "lname",                   limit: 255,                 null: false
     t.integer  "sex",                     limit: 4,   default: 0
     t.integer  "role",                    limit: 4,   default: 0,     null: false
@@ -359,7 +359,8 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.integer  "entitlement",             limit: 4,   default: 49408 #User can create these many types of contracts.
     t.integer  "subscription_type",       limit: 4,   default: 1
     t.datetime "subscription_good_until"
+    t.integer  "federated_user_type",      limit:8,    default: 0   
+    t.string   "facebook_user_id",        limit:255,    defaul: ""
   end
-  
   
 end

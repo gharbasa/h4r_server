@@ -88,7 +88,7 @@ class ApiV1::UsersController < ApiV1::BaseController
   def resetPassword
     @user = User.find(params[:id])
     if current_user_session.user.id == @user.id || current_user.admin?
-      if @user.update_attributes(:password => "kichidi123", :password_confirmation => "kichidi123", 
+      if @user.update_attributes(:password => Rails.configuration.defaultPassword, :password_confirmation => Rails.configuration.defaultPassword, 
                                               :updated_by => current_user.id)
         flash[:notice] = "Password have been successfully updated!"
         #redirect_to account_url

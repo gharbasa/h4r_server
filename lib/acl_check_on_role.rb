@@ -5,6 +5,14 @@ module AclCheckOnRole
 
    end
    
+   module FEDERATED_USER
+    DOMESTIC              = 0 #default
+    FACEBOOK              = 1 << 2 #4  100
+    LINKED                = 1 << 3 #8  1000
+    GOOGLE                = 1 << 4 #16 10000
+    DEFAULT               = DOMESTIC
+  end
+  
    module USER_ACL
     GUEST                 = 0 #default
     ADMIN                 = 1 << 16 #65536, 100000000
