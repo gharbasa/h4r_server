@@ -1,0 +1,25 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PermissionForObjectOperations",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::453046787093:user/maaghar"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws:s3:::maaghar/*"
+        },
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::maaghar/*"
+        }
+    ]
+}
+
+
