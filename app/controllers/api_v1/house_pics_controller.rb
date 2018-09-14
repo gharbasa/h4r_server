@@ -22,7 +22,7 @@ class ApiV1::HousePicsController < ApiV1::BaseController
       return
     end
     imageData4Labels = StringIO.new(Base64.decode64(params[:house_pic][:picture][:data]))
-    imageData4Text = StringIO.new(Base64.decode64(params[:house_pic][:picture][:data]))    
+    #imageData4Text = StringIO.new(Base64.decode64(params[:house_pic][:picture][:data]))    
     processPicture if !params[:house_pic][:picture].nil?
     
     #Human-99, People-99, Person-99, Clothing-96, Sari-96, Racket-65, Chair-63, Furniture-63, Gown-57, Robe-57, Kindergarten-56, Costume-54, Baby-51, Child-51, Kid-51, Dress-50
@@ -47,31 +47,30 @@ class ApiV1::HousePicsController < ApiV1::BaseController
       end
     end
     
-    resp = client.detect_text(
-         image: { bytes: imageData4Text}
-    )
-    text = ""
+    #resp = client.detect_text(
+    #     image: { bytes: imageData4Text}
+    #)
+    #text = ""
     
-    resp.text_detections.each do |text_detection|
-      logger.info "aws rekognition text:: type=#{text_detection.type}, text=#{text_detection.detected_text}, confidence=#{text_detection.confidence.to_i}"
-      if((text_detection.detected_text.is_a? String) && (text_detection.confidence.to_i >=50))
-        text = text + text_detection.detected_text + separator
-      end
-    end
+    #resp.text_detections.each do |text_detection|
+    #  logger.info "aws rekognition text:: type=#{text_detection.type}, text=#{text_detection.detected_text}, confidence=#{text_detection.confidence.to_i}"
+    #  if((text_detection.detected_text.is_a? String) && (text_detection.confidence.to_i >=50))
+    #    text = text + text_detection.detected_text + separator
+    #  end
+    #end
     
     @house_pic = HousePic.create(params[:house_pic])
     @house_pic.created_by = (current_user == nil)? nil:current_user.id
     @house_pic.rekognition_labels = labels.truncate(500)
-    @house_pic.rekognition_text = text.truncate(2000)
+    #@house_pic.rekognition_text = text.truncate(2000)
     
     if current_user.admin? || current_user.land_lord?(@house) # only house owner or admin can upload pics
-      
       if @house_pic.save
         #UserMailer.welcome_email(@user).deliver_now #deliver_later
         searchString = @house.prepareSearchString
         @house.update_attributes(:search => searchString)
         ##Update AWS Cloud Search
-        Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: @house.cloudsearch_json.to_json, content_type: "application/json"})
+        #Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: @house.cloudsearch_json.to_json, content_type: "application/json"})
         render 'show', :status => :created
       else
         @errMsg = @house_pic.errors.full_messages
@@ -89,6 +88,22 @@ class ApiV1::HousePicsController < ApiV1::BaseController
     @house_pic = HousePic.find(params[:id])
   end
 
+  def lambdaRekognition
+    @house_pic = HousePic.find(params[:id])
+    @house_pic.rekognition_text = params[:rekognition_text]
+    if @house_pic.save
+      house = @house_pic.house
+      ##Update AWS Cloud Search
+      Rails.configuration.awsCSDomainClientForAdd.upload_documents({documents: house.cloudsearch_json.to_json, content_type: "application/json"})
+      flash[:notice] = "House Pic rekognition_labels saved successfully!"
+      render 'show', :status => :ok
+    else
+      @errMsg = @house_pic.errors.full_messages
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
   def update
     @house_pic = HousePic.find(params[:id])
     if canUserUpdate? @house_pic # only house owner or admin can upload pics
