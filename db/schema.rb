@@ -196,6 +196,17 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.string   "note",               limit: 1000
     t.boolean  "active",                          default: true
   end
+  
+  create_table "account_markings", force: :cascade do |t|
+    t.integer  "account_id",          limit: 4
+    t.float    "amount",              limit: 24,   default: 0
+    t.datetime "marking_date",        limit: 24
+    t.integer  "created_by",         limit: 4
+    t.integer  "updated_by",         limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",                          default: true
+  end
 
   create_table "property_mgmts", force: :cascade do |t|
     t.string   "name",            limit: 255,                null: false

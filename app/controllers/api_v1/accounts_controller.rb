@@ -1,5 +1,5 @@
 class ApiV1::AccountsController < ApiV1::BaseController
-  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :houses]
+  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :houses, :markings, :mark]
   skip_before_action :verify_authenticity_token
   
   def index
@@ -68,6 +68,25 @@ class ApiV1::AccountsController < ApiV1::BaseController
       render 'destroy', :status => :ok
     else
       @errMsg = "User is neither admin nor house owner."
+      print @errMsg 
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
+  def markings
+    account = Account.find(params[:id])
+    @account_markings = account.account_markings.order("marking_date desc")
+  end
+  
+  def mark
+    account = Account.find(params[:id])
+    @account_marking = AccountMarking.create(params)
+    @account_marking.marking_date = Time.now
+    @account_marking.created_by = current_user.id
+    if @account_marking.save
+      render 'mark', :status => :created
+    else
+      @errMsg = @account.errors.full_messages
       print @errMsg 
       render 'error', :status => :unprocessable_entity
     end

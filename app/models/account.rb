@@ -4,6 +4,7 @@ class Account < ActiveRecord::Base
                                 :created_by, :updated_by
 
   has_many :houses
+  has_many :account_markings
   belongs_to :createdBy, class_name: "User",foreign_key: "created_by"
   include ActiveFlag
   
