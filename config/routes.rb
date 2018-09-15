@@ -158,6 +158,8 @@ H4R::Application.routes.draw do
     resources :accounts, :only => [:index, :show, :create, :update, :destroy] do
       member do
         get :houses
+        get :markings
+        post :mark
       end
     end
     
