@@ -75,7 +75,8 @@ class ApiV1::AccountsController < ApiV1::BaseController
   
   def markings
     account = Account.find(params[:id])
-    @account_markings = account.account_markings.order("marking_date desc")
+    numerOfMonths = current_user.subscription_type * 12
+    @account_markings = account.account_markings.order("marking_date desc").limit(numerOfMonths)
   end
   
   def mark
