@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 20180519005503) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "note",               limit: 1000
+    t.string   "description",        limit: 500
     t.boolean  "active",                          default: true
   end
   
