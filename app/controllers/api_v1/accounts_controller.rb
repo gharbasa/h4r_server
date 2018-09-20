@@ -1,5 +1,5 @@
 class ApiV1::AccountsController < ApiV1::BaseController
-  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :houses, :markings, :mark]
+  before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, :houses, :markings, :mark, :houses]
   skip_before_action :verify_authenticity_token
   
   def index
@@ -39,7 +39,7 @@ class ApiV1::AccountsController < ApiV1::BaseController
 
   def houses
     @account = Account.find(params[:id])
-    @houses = @account.houses
+    @houses = @account.houses.order("houses.name asc")
   end
   
   def update

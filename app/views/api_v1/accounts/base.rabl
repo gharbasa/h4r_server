@@ -9,7 +9,7 @@ attributes :id,
            :updated_by,
            :baselineDate,
            :unitsCount,
-           :netAmount
+           :netAmount,
+           :description
 
 child(:createdBy => :createdBy) { attributes :fullName}
-

@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
   attr_accessible  :baseline_amt, :baseline_date, :house_id, :note,
                                 :active, :created_at, :updated_at,
-                                :created_by, :updated_by
+                                :created_by, :updated_by, :description
 
   has_many :houses
   has_many :account_markings
