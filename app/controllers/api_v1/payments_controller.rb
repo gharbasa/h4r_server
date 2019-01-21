@@ -103,8 +103,6 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     buildYearlyDS(UserHouseContract::CONTRACTTYPE::EXPENSE)
   end
   
-  
-  
   def buildYearlyDS(reportType)
     #If not year , then default current year (what if its jan of the current year, fall back to previous year paymnets)
     house_id = params[:house_id]
@@ -118,7 +116,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     year = Time.zone.now.year
     print "year=" + year.to_s
     month = Time.zone.now.month
-    year = year - 1 if(month == 1) #January, fall back to previous year
+    #year = year - 1 if(month == 1) #January, fall back to previous year
     subscriptionType = current_user.subscriptionType - 1 
     startYear = year - subscriptionType #2018 - 4 = 2014, 2015, 2016, 2017 and 2018
     date_format = Rails.configuration.app_config[:date_format]
@@ -155,7 +153,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
       year = Time.zone.now.year
       print "year=" + year.to_s
       month = Time.zone.now.month
-      year = year - 1 if(month == 1) #January, fall back to previous year 
+      #year = year - 1 if(month == 1) #January, fall back to previous year 
     end
     date_format = Rails.configuration.app_config[:date_format]
     start_date = DateTime.strptime("01-01-#{year}", date_format).to_date #"%d-%m-%Y"
