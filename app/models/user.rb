@@ -177,6 +177,7 @@ class User < ActiveRecord::Base
 
   def activate!
     self.active = true
+    self.ndelete = false
     save
   end
   
@@ -191,11 +192,12 @@ class User < ActiveRecord::Base
   end
   
   def inactive?
-    ndelete
+    ndelete && !active 
   end
   
   def deactivate!
     self.ndelete = true
+    self.active = false
     save
   end
   

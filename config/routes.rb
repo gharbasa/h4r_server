@@ -38,6 +38,7 @@ H4R::Application.routes.draw do
         put :resetPassword
         put :changeSubscription
         put :entitlement
+        put :activate
       end
       resources :notifications, :only => [:index] do
         member do
