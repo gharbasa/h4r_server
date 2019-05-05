@@ -225,6 +225,20 @@ class ApiV1::UsersController < ApiV1::BaseController
     end
   end
   
+  def activate
+    @user = User.find(params[:id])
+    if current_user_session.user.id == @user.id || current_user.admin?
+      @user.activate! 
+      current_user_session.destroy if current_user_session.user.id == @user.id
+      #TODO: Send email to admin that the user is deactivated  
+      render 'activate', :status => :ok
+    else      
+      @errMsg = @user.errors.full_messages[0]
+      print @errMsg
+      render 'error', :status => :unprocessable_entity
+    end
+  end
+  
   def search
     print "user wants to search users here."
     users = User.arel_table
