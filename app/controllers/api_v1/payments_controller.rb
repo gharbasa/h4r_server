@@ -1,6 +1,6 @@
 class ApiV1::PaymentsController < ApiV1::BaseController
   before_filter :require_user, :only => [:index, :show, :create, :update, :destroy, 
-                              :monthlyIncome, :yearlyIncome,:monthlyExpense,:yearlyExpense]
+                              :monthlyIncome, :yearlyIncome, :monthlyExpense, :yearlyExpense, :allMonthlyIncome]
   skip_before_action :verify_authenticity_token
   
   def index
@@ -153,6 +153,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
       year = Time.zone.now.year
       print "year=" + year.to_s
       month = Time.zone.now.month
+      print "month=" + month.to_s
       #year = year - 1 if(month == 1) #January, fall back to previous year 
     end
     date_format = Rails.configuration.app_config[:date_format]
@@ -162,6 +163,52 @@ class ApiV1::PaymentsController < ApiV1::BaseController
     contracts = UserHouseContract.where(:house_id => house_id, :contract_type => reportType)
     @payments = Payment.active.betweenDates(start_date, end_date).inContracts(contracts).order(payment_date: :asc)
   end
+  
+  def allMonthlyIncome
+    buildMonthYearlyDS
+  end
+  
+  def buildMonthYearlyDS()
+    year = params[:year]
+    year = year.to_i if !(year.nil?)
+    
+    month = params[:month]
+    month = (month.to_i + 1) if !(month.nil?)
+    if(month == 13)
+      month = 1
+      year = year + 1
+    end 
+    
+    accountId = params[:accountId]
+    year = Time.zone.now.year if(year.nil?)
+    month = Time.zone.now.month if(month.nil?)
+    last_day_of_month = Date.new(year,month,1).next_month.prev_day
+    
+    date_format = Rails.configuration.app_config[:date_format]
+    start_date = DateTime.strptime("01-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
+    end_date = last_day_of_month #DateTime.strptime("#{last_day_of_month}-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
+    print "start_date=" + start_date.to_s + ", end_date=" + end_date.to_s
+    
+    account = Account.find(params[:accountId])
+    houses = account.houses #.order("houses.name asc")
+    contracts = UserHouseContract.where(:house => houses).order(contract_type: :asc)
+    print "month=" + month.to_s + ", year=" + year.to_s + ", last_day_of_month=" + last_day_of_month.to_s
+    print "houses=" + houses.count.to_s + ", contracts=" + contracts.count.to_s
+    payments = Payment.active.betweenReceivedDates(start_date, end_date)
+            .inContracts(contracts).order(payment_date: :desc)
+    @output = []
+    payments.each do |payment|
+      obj = MonthTransaction.new
+      obj.paymentDate = payment.payment_date
+      obj.transType = payment.user_house_contract.contract_type
+      obj.amount = payment.amount
+      obj.houseName = payment.user_house_contract.house.name
+      obj.description = payment.note
+      @output << obj
+    end
+    
+  end
+  
   def isAuth user_house_contract
     house = user_house_contract.house
     return true if current_user.admin? ||
