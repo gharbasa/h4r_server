@@ -46,11 +46,11 @@ module H4R #This is a namespace for routes.rb
 
     Aws::VERSION =  Gem.loaded_specs["aws-sdk"].version
     #AWS Configuration
-    Aws.config.update({
-      credentials: Aws::Credentials.new(Rails.configuration.app_config[:AWS_KEY], Rails.configuration.app_config[:AWS_SECRET])
-    })
-    Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
-    Aws.config.update({log_level: :debug})
+    #Aws.config.update({
+    #  credentials: Aws::Credentials.new(Rails.configuration.app_config[:AWS_KEY], Rails.configuration.app_config[:AWS_SECRET])
+    #})
+    #Aws.config.update({region: Rails.configuration.app_config[:AWS_REGION]})
+    #Aws.config.update({log_level: :debug})
     
     config.web_console.whitelisted_ips = '127.0.0.1'
     
@@ -83,7 +83,7 @@ module H4R #This is a namespace for routes.rb
       self.awsCSDomainClientForSearch = client = Aws::CloudSearchDomain::Client.new(endpoint:Rails.configuration.app_config[:CS_SEARCH_DOCS_ENDPOINT])
       
     end
-    config.load_cloudsearch_config
+    #config.load_cloudsearch_config
     
     
     

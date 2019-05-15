@@ -142,6 +142,7 @@ H4R::Application.routes.draw do
         get :yearlyIncome
         get :monthlyExpense
         get :yearlyExpense
+        get :allMonthlyIncome
       end
     end
     
