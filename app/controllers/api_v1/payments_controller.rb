@@ -169,31 +169,45 @@ class ApiV1::PaymentsController < ApiV1::BaseController
   end
   
   def buildMonthYearlyDS()
-    year = params[:year]
-    year = year.to_i if !(year.nil?)
     
-    month = params[:month]
-    month = (month.to_i + 1) if !(month.nil?)
-    if(month == 13)
-      month = 1
-      year = year + 1
-    end 
+    #year = params[:year]
+    #year = year.to_i if !(year.nil?)
+    
+    #month = params[:month]
+    #month = (month.to_i + 1) if !(month.nil?)
+    marking = AccountMarking.find(params[:markingId])
+    start_date  = marking.marking_date
+    
+    nextMarking = AccountMarking.where("marking_date > ?", marking.marking_date).order('id ASC').limit(1)
+    #if(month == 13)
+    #  month = 1
+    #  year = year + 1
+    #end 
     
     accountId = params[:accountId]
-    year = Time.zone.now.year if(year.nil?)
-    month = Time.zone.now.month if(month.nil?)
-    last_day_of_month = Date.new(year,month,1).next_month.prev_day
-    
-    date_format = Rails.configuration.app_config[:date_format]
-    start_date = DateTime.strptime("01-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
-    end_date = last_day_of_month #DateTime.strptime("#{last_day_of_month}-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
+    #year = Time.zone.now.year if(year.nil?)
+    #month = Time.zone.now.month if(month.nil?)
+    #last_day_of_month = Date.new(year,month,1).next_month.prev_day
+    if(nextMarking.length > 0)
+      nextMarking = nextMarking[0]
+      end_date    = nextMarking.marking_date
+      print "nextMarking.id=" + nextMarking.id.to_s
+    else
+      print "There is no next marking"
+      year = Time.zone.now.year
+      month = Time.zone.now.month
+      last_day_of_month = Date.new(year,month,1).next_month.prev_day
+      end_date = last_day_of_month
+    end
+    #start_date = DateTime.strptime("01-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
+    #end_date = last_day_of_month #DateTime.strptime("#{last_day_of_month}-#{month}-#{year}", date_format).to_date #"%d-%m-%Y"
     print "start_date=" + start_date.to_s + ", end_date=" + end_date.to_s
     
     account = Account.find(params[:accountId])
     houses = account.houses #.order("houses.name asc")
     contracts = UserHouseContract.where(:house => houses).order(contract_type: :asc)
     print "month=" + month.to_s + ", year=" + year.to_s + ", last_day_of_month=" + last_day_of_month.to_s
-    print "houses=" + houses.count.to_s + ", contracts=" + contracts.count.to_s
+    #print "houses=" + houses.count.to_s + ", contracts=" + contracts.count.to_s
     payments = Payment.active.betweenReceivedDates(start_date, end_date)
             .inContracts(contracts).order(payment_date: :desc)
     @output = []
