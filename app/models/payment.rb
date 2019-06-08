@@ -8,7 +8,8 @@ class Payment < ActiveRecord::Base #This is actually $$$ receivables.
   scope :active, lambda { where(:active => 1) }
   scope :afterDate, lambda { |payment_date| where("payment_date > ?", payment_date) }
   scope :betweenDates, lambda {|start_date, end_date| where(:payment_date => start_date.beginning_of_day..end_date.end_of_day)}
-  scope :betweenReceivedDates, lambda {|start_date, end_date| where(:updated_at => start_date.beginning_of_day..end_date.end_of_day)}
+  #scope :betweenReceivedDates, lambda {|start_date, end_date| where(:updated_at => start_date.beginning_of_day..end_date.end_of_day)}
+  scope :betweenReceivedDates, lambda {|start_date, end_date| where(:updated_at => start_date..end_date)}
   scope :inContracts, lambda { |contracts| where(:user_house_contract => contracts) }
   
   include ActiveFlag
