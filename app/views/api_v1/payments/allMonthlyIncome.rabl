@@ -5,6 +5,7 @@ attributes :paymentDate,
            :amount,
            :houseName,
            :description,
+           :note,
            :transTypeStr
 
 
