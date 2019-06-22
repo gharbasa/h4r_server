@@ -218,6 +218,7 @@ class ApiV1::PaymentsController < ApiV1::BaseController
       obj.amount = payment.amount
       obj.houseName = payment.user_house_contract.house.name
       obj.description = payment.note
+      obj.note = payment.user_house_contract.note
       @output << obj
     end
     

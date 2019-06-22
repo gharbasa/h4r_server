@@ -1,5 +1,5 @@
 class MonthTransaction
-  attr_accessor :paymentDate, :transType, :amount, :houseName, :description
+  attr_accessor :paymentDate, :transType, :amount, :houseName, :description, :note
   
   def formattedPaymentDate
     paymentDate.to_s(:custom_datetime)
